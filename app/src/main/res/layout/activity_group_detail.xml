@@ -1,0 +1,237 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/empty_back">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="60dp"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:orientation="horizontal"
+                    android:text="@string/group_detail_title"
+                    android:textColor="@color/white"
+                    android:visibility="visible" />
+
+                <ImageButton
+                    android:id="@+id/btn_cross"
+                    style="@style/Widget.AppCompat.Light.ActionButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:contentDescription="@string/btn_cross"
+                    android:src="@drawable/ic_arrow_back_white_24dp"
+                    android:visibility="visible" />
+
+            </FrameLayout>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/backgrey">
+
+            <RelativeLayout
+                android:id="@id/profileTopLayout"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:background="@color/caribbean_green">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp">
+
+                    <RelativeLayout
+                        android:id="@+id/usersprofile"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_toLeftOf="@+id/LeftLayout">
+
+                        <ImageView
+                            android:id="@+id/imgEvent"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_alignParentLeft="true"
+                            android:layout_marginLeft="10dp"
+                            android:background="@drawable/icon_group"
+                            android:contentDescription="@string/app_name" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_toRightOf="@+id/imgEvent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/eventName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:maxLines="1"
+                                android:singleLine="true"
+                                android:textColor="#ffffff"
+                                android:textSize="18sp" />
+
+                            <TextView
+                                android:id="@+id/eventmember"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginTop="3dp"
+                                android:maxLines="2"
+                                android:textColor="#ffffff"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@id/LeftLayout"
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false">
+
+                        <RelativeLayout
+                            android:id="@+id/LayoutSummary"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="top"
+                            android:layout_weight="1.0">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <Button
+                                    android:id="@+id/summary"
+                                    android:layout_width="22dp"
+                                    android:layout_height="22dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/summary_button" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="20dp"
+                                    android:text="@string/summary"
+                                    android:textColor="@color/white"
+                                    android:layout_marginTop="5dp"
+                                    android:textSize="10sp" />
+                            </LinearLayout>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/LayoutEditEvent"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="top"
+                            android:layout_weight="1.0"
+                            android:layout_marginLeft="10dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <Button
+                                    android:id="@+id/btnMenu"
+                                    android:layout_width="22dp"
+                                    android:layout_height="22dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/ic_edit_white_24dp" />
+
+                                <TextView
+                                    android:id="@+id/txtremind"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="20dp"
+                                    android:layout_marginTop="5dp"
+                                    android:text="@string/edit"
+                                    android:textColor="#ffffff"
+                                    android:textSize="10sp" />
+                            </LinearLayout>
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/txtEventListMsg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/profileTopLayout"
+                android:layout_margin="15dp"
+                android:gravity="center"
+                android:textColor="@color/darkgray"
+                android:textSize="14sp" />
+
+            <ListView
+                android:id="@+id/listEventDetail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/profileTopLayout"
+                android:layout_margin="8dp"
+                android:background="#ffffff"
+                android:divider="#efebe8"
+                android:dividerHeight="1dp"
+                android:scrollbars="none" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/ic_add_white_24dp"
+                android:layout_marginBottom="50dp"
+                android:layout_alignBottom="@+id/txtEventListMsg"
+                android:layout_alignRight="@+id/txtEventListMsg"
+                android:layout_alignEnd="@+id/txtEventListMsg" />
+
+        </RelativeLayout>
+
+
+    </FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout>

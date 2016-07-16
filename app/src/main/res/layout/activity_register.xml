@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/caribbean_green"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/lets_get_you"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:text="@string/register_lets_get_you"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/lets_select_picture"
+            android:layout_width="fill_parent"
+            android:layout_height="60dp"
+            android:layout_below="@id/lets_get_you"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/select_picture_optional"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/imgUserProfile"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/lets_select_picture"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerCrop"
+            fresco:placeholderImage="@drawable/profile_pic_home"
+            fresco:backgroundImage="@color/colorPrimaryDark"
+            fresco:placeholderImageScaleType="fitCenter"
+            fresco:roundAsCircle="true"/>
+
+        <EditText
+            android:id="@+id/editName"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/imgUserProfile"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/edittext_design"
+            android:drawableLeft="@drawable/batman"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="@string/name_hint"
+            android:inputType="textPersonName"
+            android:maxLength="50"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/editPhone"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_below="@+id/editName"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="17dp"
+            android:background="@drawable/edittext_design"
+            android:drawableLeft="@drawable/phone"
+            android:ems="10"
+            android:gravity="center_vertical"
+            android:hint="@string/phone_hint"
+            android:inputType="phone"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/editPhone"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/button_design"
+            android:gravity="center"
+            android:text="@string/btn_signup"
+            android:textColor="@color/caribbean_green"
+            android:textSize="18sp" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp">
+
+        <ImageView
+            android:id="@+id/logo_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/logo"
+            android:contentDescription="@string/app_name" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

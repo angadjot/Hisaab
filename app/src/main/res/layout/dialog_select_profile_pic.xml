@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="125dp"
+    android:background="@color/white"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp">
+
+    <RelativeLayout
+        android:id="@+id/topDialogLayout"
+        android:background="@color/caribbean_green"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:textSize="16sp"
+            android:textColor="#ffffff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_select_profile_pic"
+            android:layout_centerInParent="true" />
+
+        <Button
+            android:id="@+id/btnCross"
+            android:background="@drawable/icon_cross"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="#ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/topDialogLayout"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:textSize="14sp"
+            android:textColor="@color/davy_grey"
+            android:id="@+id/btnCamera"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="@string/dialog_camera" />
+
+        <View
+            android:layout_gravity="center"
+            android:background="@color/davy_grey"
+            android:layout_width="220dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp" />
+
+        <Button
+            android:textSize="14sp"
+            android:textColor="@color/davy_grey"
+            android:id="@+id/btnGallery"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="@string/dialog_gallery" />
+
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "798183733853",
+    "firebase_url": "https://hisaab-5d9dc.firebaseio.com",
+    "project_id": "hisaab-5d9dc",
+    "storage_bucket": "hisaab-5d9dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798183733853:android:545c9fe946b0c859",
+        "android_client_info": {
+          "package_name": "com.tech.petabyteboy.hisaab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "798183733853-q8o70c4ml3l23de24lok523crb7cd08f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tech.petabyteboy.hisaab",
+            "certificate_hash": "06D7878B5896A85074292AAD2D17E15810FB4D49"
+          }
+        },
+        {
+          "client_id": "798183733853-tal8tvluk4m9k2lvq48v1ajcukgnr9r4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9s7TCLZLR5JJupjuiilN1SjX3WyOTE5g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "798183733853-tal8tvluk4m9k2lvq48v1ajcukgnr9r4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

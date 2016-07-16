@@ -1,0 +1,109 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/caribbean_green"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:logo="@drawable/logo_title" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/caribbean_green">
+
+            <RelativeLayout
+                android:id="@+id/profileTopLayout"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="10dp">
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/imgProfile"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/profileimage"
+                    android:visibility="visible"
+                    android:scaleType="centerCrop"
+                    fresco:placeholderImage="@drawable/profile_pic_home"
+                    fresco:backgroundImage="@color/colorPrimaryDark"
+                    fresco:placeholderImageScaleType="fitCenter"
+                    fresco:roundAsCircle="true"/>
+
+                <Button
+                    android:id="@+id/imgBtnProfile"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="#ffffff"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="110dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_toRightOf="@id/imgProfile"
+                    android:maxLines="2"
+                    android:singleLine="false"
+                    android:text="Username"
+                    android:textColor="#ffffff"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/txtAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txtUserName"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="110dp"
+                    android:layout_toRightOf="@id/imgProfile"
+                    android:singleLine="true"
+                    android:text="Your Due : Rs.20"
+                    android:textColor="#ffffff"
+                    android:textSize="12dp" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/containerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/menu_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/drawer_header"
+        app:menu="@menu/menu_drawer" />
+
+</android.support.v4.widget.DrawerLayout>

@@ -1,0 +1,97 @@
+Activity Resolver Table:
+  Non-Data Actions:
+      android.intent.action.MAIN:
+        433fac48 com.tech.petabyteboy.hisaab/.SplashScreenActivity filter 4343c398
+          Action: "android.intent.action.MAIN"
+          Category: "android.intent.category.LAUNCHER"
+      com.tech.petabyteboy.hisaab.MAINACTIVITY:
+        430eebb0 com.tech.petabyteboy.hisaab/.MainActivity filter 4317bd90
+          Action: "com.tech.petabyteboy.hisaab.MAINACTIVITY"
+          Category: "android.intent.category.DEFAULT"
+
+Receiver Resolver Table:
+  Non-Data Actions:
+      com.google.android.gms.measurement.UPLOAD:
+        430c68b8 com.tech.petabyteboy.hisaab/com.google.android.gms.measurement.AppMeasurementReceiver filter 42c638e8
+          Action: "com.google.android.gms.measurement.UPLOAD"
+      com.google.android.c2dm.intent.RECEIVE:
+        43156df8 com.tech.petabyteboy.hisaab/com.google.firebase.iid.FirebaseInstanceIdReceiver filter 4316a758
+          Action: "com.google.android.c2dm.intent.RECEIVE"
+          Action: "com.google.android.c2dm.intent.REGISTRATION"
+          Category: "com.tech.petabyteboy.hisaab"
+      com.google.android.c2dm.intent.REGISTRATION:
+        43156df8 com.tech.petabyteboy.hisaab/com.google.firebase.iid.FirebaseInstanceIdReceiver filter 4316a758
+          Action: "com.google.android.c2dm.intent.RECEIVE"
+          Action: "com.google.android.c2dm.intent.REGISTRATION"
+          Category: "com.tech.petabyteboy.hisaab"
+
+Service Resolver Table:
+  Non-Data Actions:
+      com.google.firebase.INSTANCE_ID_EVENT:
+        4318ec08 com.tech.petabyteboy.hisaab/com.google.firebase.iid.FirebaseInstanceIdService filter 433f0490
+          Action: "com.google.firebase.INSTANCE_ID_EVENT"
+          mPriority=-500, mHasPartialTypes=false
+
+Permissions:
+  Permission [com.tech.petabyteboy.hisaab.permission.C2D_MESSAGE] (423ec338):
+    sourcePackage=com.tech.petabyteboy.hisaab
+    uid=10226 gids=[] type=0 prot=signature
+    packageSetting=PackageSetting{421f3dd0 com.tech.petabyteboy.hisaab/10226}
+    perm=Permission{43091c50 com.tech.petabyteboy.hisaab.permission.C2D_MESSAGE}
+
+Registered ContentProviders:
+  com.tech.petabyteboy.hisaab/com.google.firebase.provider.FirebaseInitProvider:
+    Provider{42da4ee8 com.tech.petabyteboy.hisaab/com.google.firebase.provider.FirebaseInitProvider}
+
+ContentProvider Authorities:
+  [com.tech.petabyteboy.hisaab.firebaseinitprovider]:
+    Provider{42da4ee8 com.tech.petabyteboy.hisaab/com.google.firebase.provider.FirebaseInitProvider}
+      applicationInfo=ApplicationInfo{43046578 com.tech.petabyteboy.hisaab}
+
+Key Set Manager:
+  [com.tech.petabyteboy.hisaab]
+      Signing KeySets: 5
+
+Packages:
+  Package [com.tech.petabyteboy.hisaab] (421f3dd0):
+    userId=10226 gids=[3003, 1028, 1015]
+    pkg=Package{430329f8 com.tech.petabyteboy.hisaab}
+    codePath=/data/app/com.tech.petabyteboy.hisaab-2.apk
+    resourcePath=/data/app/com.tech.petabyteboy.hisaab-2.apk
+    nativeLibraryPath=/data/app-lib/com.tech.petabyteboy.hisaab-2
+    versionCode=1 targetSdk=24
+    versionName=1.0
+    applicationInfo=ApplicationInfo{43046578 com.tech.petabyteboy.hisaab}
+    flags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    mtkFlags=[ ]
+    dataDir=/data/data/com.tech.petabyteboy.hisaab
+    supportsScreens=[small, medium, large, xlarge, resizeable, anyDensity]
+    timeStamp=2016-07-15 23:37:01
+    firstInstallTime=2016-07-15 13:46:18
+    lastUpdateTime=2016-07-15 23:37:07
+    signatures=PackageSignatures{421a24e0 [42418ac8]}
+    permissionsFixed=true haveGids=true installStatus=1
+    pkgFlags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    User 0:  installed=true blocked=false stopped=false notLaunched=false enabled=0
+    grantedPermissions:
+      android.permission.READ_EXTERNAL_STORAGE
+      android.permission.CAMERA
+      android.permission.WRITE_EXTERNAL_STORAGE
+      android.permission.INTERNET
+      com.tech.petabyteboy.hisaab.permission.C2D_MESSAGE
+      android.permission.WAKE_LOCK
+      android.permission.ACCESS_NETWORK_STATE
+      com.google.android.c2dm.permission.RECEIVE
+msg,6/4/16 4:53 PM: No settings file; creating initial state
+msg,6/8/16 5:09 PM: Updated system app + com.google.android.inputmethod.pinyin no longer present; removing system privileges for com.google.android.inputmethod.pinyin
+msg,6/14/16 2:05 PM: Package com.here.app.maps no longer exists; wiping its data
+msg,6/18/16 12:46 PM: Package com.tech.petabyteboy.messenger no longer exists; wiping its data
+msg,6/19/16 8:20 PM: System package com.trafficctr.miui no longer exists; wiping its data
+msg,6/19/16 8:20 PM: System package com.android.calculator2 no longer exists; wiping its data
+msg,6/19/16 8:20 PM: System package com.miui.barcodescanner no longer exists; wiping its data
+msg,7/5/16 7:44 PM: Package com.tech.petabyteboy.hisaab no longer exists; wiping its data
+msg,7/8/16 10:12 PM: Need to read from backup stopped packages file
+msg,7/9/16 11:09 PM: Package com.tech.petabyteboy.hisaab no longer exists; wiping its data
+msg,7/10/16 1:08 AM: Package com.tech.petabyteboy.hisaab no longer exists; wiping its data
+msg,7/14/16 9:44 PM: Package com.evernote no longer exists; wiping its data
+msg,7/14/16 10:08 PM: Package com.weplaydots.twodotsandroid no longer exists; wiping its data

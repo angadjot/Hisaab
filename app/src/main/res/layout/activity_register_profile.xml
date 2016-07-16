@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/caribbean_green"
+    android:orientation="vertical"
+    tools:context="com.tech.petabyteboy.hisaab.RegisterProfileActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/register_profile_title1"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        tools:targetApi="jelly_bean_mr1" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/register_profile_title2"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        tools:targetApi="jelly_bean_mr1" />
+
+    <TextView
+        android:id="@+id/txt_dob"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/edittext_design"
+        android:drawableLeft="@drawable/birthday"
+        android:ems="10"
+        android:gravity="center_vertical"
+        android:hint="@string/date_hint"
+        android:inputType="date"
+        android:text="@string/date_hint"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="18sp"
+        tools:targetApi="jelly_bean_mr1" />
+
+
+    <TextView
+        android:id="@+id/txt_gender"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="17dp"
+        android:background="@drawable/edittext_design"
+        android:drawableLeft="@drawable/gender"
+        android:ems="10"
+        android:gravity="center_vertical"
+        android:hint="@string/gender_hint"
+        android:inputType="text"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="18sp"
+        tools:targetApi="jelly_bean_mr1" />
+
+
+    <AutoCompleteTextView
+        android:id="@+id/txtCountry"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="17dp"
+        android:background="@drawable/edittext_design"
+        android:drawableLeft="@drawable/city"
+        android:ems="10"
+        android:gravity="center_vertical"
+        android:hint="@string/city_hint"
+        android:inputType="text"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="18sp"
+        tools:targetApi="jelly_bean_mr1" />
+
+
+    <EditText
+        android:id="@+id/editEmail"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="17dp"
+        android:background="@drawable/edittext_design"
+        android:drawableLeft="@drawable/email"
+        android:ems="10"
+        android:hint="@string/Email_hint"
+        android:inputType="textEmailAddress"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="18sp"
+        tools:targetApi="jelly_bean_mr1" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/btn_later"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_design"
+            android:gravity="center"
+            android:text="@string/btn_later"
+            android:textColor="@color/caribbean_green"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_done"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_toRightOf="@id/btn_later"
+            android:background="@drawable/button_design"
+            android:gravity="center"
+            android:text="@string/btn_done"
+            android:textColor="@color/caribbean_green"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="70dp"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/logo_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/logo"
+            android:contentDescription="@string/app_name" />
+
+    </RelativeLayout>
+
+</LinearLayout>
