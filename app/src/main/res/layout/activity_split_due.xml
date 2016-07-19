@@ -1,5 +1,6 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -90,14 +91,18 @@
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="8dp">
 
-                    <ImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/imgProfile"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/profile_pic_home"
-                        android:contentDescription="@string/app_name" />
+                        android:contentDescription="@string/app_name"
+                        android:scaleType="centerCrop"
+                        fresco:backgroundImage="@color/colorPrimaryDark"
+                        fresco:placeholderImage="@drawable/profile_pic_home"
+                        fresco:placeholderImageScaleType="fitCenter"
+                        fresco:roundAsCircle="true" />
 
                     <TextView
                         android:id="@+id/changepayee"
@@ -336,7 +341,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/btnDuesOuting"
                                 android:layout_centerHorizontal="true"
-                                android:text="@string/add_dues_movie"
+                                android:text="@string/add_dues_outing"
                                 android:textColor="@color/darkgray"
                                 android:textSize="10sp" />
                         </RelativeLayout>
@@ -443,7 +448,7 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="10dp"
-                    android:layout_toLeftOf="@+id/toggleButtoneedit"
+                    android:layout_toLeftOf="@+id/toggleButtonedit"
                     android:gravity="left"
                     android:text="Split Even"
                     android:textColor="#000000"
@@ -451,7 +456,7 @@
                     android:textStyle="bold" />
 
                 <ToggleButton
-                    android:id="@id/toggleButtoneedit"
+                    android:id="@id/toggleButtonedit"
                     android:layout_width="30dp"
                     android:layout_height="20dp"
                     android:layout_alignParentRight="true"

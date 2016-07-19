@@ -1,5 +1,6 @@
 package com.tech.petabyteboy.hisaab;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,8 +24,8 @@ public class DuesViewAdapter extends RecyclerView.Adapter<DuesViewAdapter.DataOb
     @Override
     public DuesViewAdapter.DataObjectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_view_dues,parent,false);
+        LayoutInflater layoutInflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = layoutInflater.inflate(R.layout.card_view_dues,parent,false);
 
         DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
 

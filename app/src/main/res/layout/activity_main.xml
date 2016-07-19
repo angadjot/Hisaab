@@ -69,7 +69,6 @@
                     android:layout_toRightOf="@id/imgProfile"
                     android:maxLines="2"
                     android:singleLine="false"
-                    android:text="Username"
                     android:textColor="#ffffff"
                     android:textSize="16sp" />
 
@@ -82,7 +81,7 @@
                     android:layout_marginRight="110dp"
                     android:layout_toRightOf="@id/imgProfile"
                     android:singleLine="true"
-                    android:text="Your Due : Rs.20"
+                    android:text="Your Due : "
                     android:textColor="#ffffff"
                     android:textSize="12dp" />
 

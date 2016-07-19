@@ -144,7 +144,7 @@
                             android:layout_marginRight="8dp"
                             android:contentDescription="@string/imggroup"
                             android:scaleType="centerCrop"
-                            fresco:placeholderImage="@drawable/profile_pic_home"
+                            fresco:placeholderImage="@drawable/icon_group"
                             fresco:backgroundImage="@color/colorPrimaryDark"
                             fresco:placeholderImageScaleType="fitCenter"
                             fresco:roundAsCircle="true"/>

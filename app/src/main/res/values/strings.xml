@@ -25,7 +25,7 @@
     <string name="no_groups">No Groups Created Yet!!</string>
     <string name="recent_title">Recent Activities</string>
     <string name="profile_title">Profile</string>
-    <string name="profile_username">UserName</string>
+    <string name="profile_username">Username</string>
     <string name="BACK">BACK</string>
     <string name="create_group_title">Create Group</string>
     <string name="add_group_title">Group Name</string>
@@ -77,4 +77,6 @@
     <string name="dialog_infromText">Hey! I just wanted to inform you that I shall Pay</string>
     <string name="dialog_days">Days</string>
     <string name="dialog_send">Send</string>
+    <string name="contact_title">Contact</string>
+    <string name="symbol_rupee">₹</string>
 </resources>

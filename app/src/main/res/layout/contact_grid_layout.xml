@@ -31,16 +31,6 @@
                     fresco:placeholderImageScaleType="fitCenter"
                     fresco:roundAsCircle="true" />
 
-                <Button
-                    android:id="@+id/imgUserButton"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:gravity="center"
-                    android:textColor="#ffffff"
-                    android:textSize="14dp"
-                    android:visibility="gone" />
-
-
             </FrameLayout>
 
             <ImageView

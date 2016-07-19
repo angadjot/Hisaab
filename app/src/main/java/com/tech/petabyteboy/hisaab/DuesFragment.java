@@ -59,6 +59,7 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(getContext(),AddDuesActivity.class);
+        intent.putExtra("from", "home");
         startActivity(intent);
 
     }

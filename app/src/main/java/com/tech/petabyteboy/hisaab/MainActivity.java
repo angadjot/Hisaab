@@ -3,7 +3,10 @@ package com.tech.petabyteboy.hisaab;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -23,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -31,7 +36,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.twitter.sdk.android.core.models.User;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener, View.OnClickListener {
 
@@ -44,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentTransaction FragmentTransaction;
 
     private SimpleDraweeView imgProfile;
+    private SimpleDraweeView navProfile;
     private TextView txtUserName;
 
     private View navDrawerHeaderView;
@@ -89,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navUsername = (TextView) navDrawerHeaderView.findViewById(R.id.username);
         navEmailID = (TextView) navDrawerHeaderView.findViewById(R.id.user_mail);
 
+        navProfile = (SimpleDraweeView) navDrawerHeaderView.findViewById(R.id.imgUsrProfile);
+
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolBar, R.string.app_name, R.string.app_name);
 
         drawerLayout.setDrawerListener(drawerToggle);
@@ -102,12 +115,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         txtUserName = (TextView) findViewById(R.id.txtUserName);
         txtUserName.setOnClickListener(this);
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
         String uid = user.getUid();
-
-        firebaseDatabase = FirebaseDatabase.getInstance();
 
         userdataReference = firebaseDatabase.getReference().child("Users").child(uid);
         duesdataReference = firebaseDatabase.getReference().child("Dues").child(uid);
@@ -128,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-
     }
 
     private void setValues(){
@@ -143,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if (EmailID.isEmpty()){
-            navEmailID.setText("emailid@domain.com");
+            navEmailID.setText("username@domain.com");
         }
         else {
             navEmailID.setText(EmailID);
@@ -249,4 +261,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
     }
+
 }

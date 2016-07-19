@@ -35,31 +35,7 @@
     <color name="empty_back">#eeeeee</color>
     <color name="darkgray">#ff232323</color>
     <color name="dividerColor">#B6B6B6</color>
-    <color name="a">#ff0247fe</color>
-    <color name="b">#ffb0bf1a</color>
-    <color name="c">#ffe32636</color>
-    <color name="d">#ffe52b50</color>
-    <color name="e">#ffffbf00</color>
-    <color name="f">#ff9966cc</color>
-    <color name="g">#ff8db600</color>
-    <color name="h">#ff00ffff</color>
-    <color name="i">#ffd0ff14</color>
-    <color name="j">#fffdee00</color>
-    <color name="k">#ff007fff</color>
-    <color name="l">#ffff91af</color>
-    <color name="m">#ffffe135</color>
-    <color name="n">#ffe0218a</color>
-    <color name="o">#ffbfff00</color>
-    <color name="p">#fface5ee</color>
-    <color name="q">#ff66ff00</color>
-    <color name="r">#ffff007f</color>
-    <color name="s">#ffff0800</color>
-    <color name="t">#ffdfff00</color>
-    <color name="u">#ff7fff00</color>
-    <color name="v">#ffff3800</color>
-    <color name="w">#ff00b7eb</color>
-    <color name="x">#ff6f00ff</color>
-    <color name="y">#fff400a1</color>
-    <color name="z">#ffccff00</color>
+    <color name="grey">#666666</color>
+
 </resources>
 

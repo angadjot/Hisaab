@@ -1,10 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="170dp"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimary"
     android:orientation="vertical">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imgUsrProfile"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -14,7 +15,11 @@
         android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/username"
         android:layout_alignStart="@+id/username"
-        android:contentDescription="@string/profileimage" />
+        android:contentDescription="@string/profileimage"
+        fresco:backgroundImage="@color/colorPrimaryDark"
+        fresco:placeholderImage="@drawable/profile_pic_home"
+        fresco:placeholderImageScaleType="fitCenter"
+        fresco:roundAsCircle="true"/>
 
     <TextView
         android:id="@+id/username"
@@ -25,7 +30,6 @@
         android:layout_alignParentStart="true"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="16dp"
-        android:text="Android User"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffffff" />
 
@@ -37,7 +41,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/username"
         android:layout_marginBottom="12dp"
-        android:text="username@gmail.com"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#ffffffff" />
 

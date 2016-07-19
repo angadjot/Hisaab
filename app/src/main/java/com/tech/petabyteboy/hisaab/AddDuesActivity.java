@@ -2,36 +2,35 @@ package com.tech.petabyteboy.hisaab;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class AddDuesActivity extends AppCompatActivity implements View.OnClickListener {
-
-    public static int requestselectcontact;
 
     private Toolbar toolbar_add_dues;
 
@@ -63,7 +62,39 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
 
     private GridView gridSelectedContact;
 
-    private String strEventType;
+    private String strDueType;
+    private String passedFrom;
+
+    // key Values for Intent and Request Code
+
+    public static final String amount_key = "amount";
+    public static final String comment_key = "comment";
+    public static final String duetype_key = "duetype";
+    public static final String groupID_key = "groupID";
+    public static final String groupName_key = "groupName";
+    public static final String groupImage_key = "groupImage";
+
+    public static int REQUEST_SELECT_CONTACT = 0;
+
+    public static final int REQUEST_CODE_ADD_DUES = 10;
+
+    // Custom BaseAdapter for GridView (Contacts)
+    private DuesSharedWithListAdapter adapter;
+
+    private AdapterView.OnItemClickListener mItemMultiClickListener;
+
+    public AddDuesActivity(){
+        mItemMultiClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i == 0) {
+                    Intent intent = new Intent(getApplicationContext(), SelectContactActivity.class);
+                    intent.putExtra("from", "dues");
+                    startActivityForResult(intent, AddDuesActivity.REQUEST_SELECT_CONTACT);
+                }
+            }
+        };
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +112,8 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
 
         txtUserName = (TextView) findViewById(R.id.txtUserName);
         txtUserName.setText("You Paid");
+
+        passedFrom = getIntent().getStringExtra("from");
 
         editAmount = (EditText) findViewById(R.id.editAmount);
         editComment = (EditText) findViewById(R.id.editComment);
@@ -113,7 +146,44 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
         gridSelectedContact = (GridView) findViewById(R.id.gridSelectedContact);
 
         getScale();
+
+        init();
     }
+
+    private void init() {
+
+        if (adapter == null) {
+            gridSelectedContact = (GridView) findViewById(R.id.gridSelectedContact);
+            gridSelectedContact.setFastScrollEnabled(true);
+            GlobalVariables.data = getGalleryPhotos();
+            getScale();
+            adapter = new DuesSharedWithListAdapter(getApplicationContext());
+            gridSelectedContact.setOnItemClickListener(mItemMultiClickListener);
+            gridSelectedContact.setAdapter(adapter);
+        }
+        adapter = new DuesSharedWithListAdapter(getApplication());
+        gridSelectedContact.setOnItemClickListener(mItemMultiClickListener);
+        gridSelectedContact.setAdapter(adapter);
+
+    }
+
+    private ArrayList<DuesSharedWithModel> getGalleryPhotos() {
+
+        ArrayList<DuesSharedWithModel> galleryList = new ArrayList<>();
+
+        DuesSharedWithModel model = new DuesSharedWithModel();
+        model.name = "Select Contact";
+        model.image = "Add";
+        model.addBtn = "yes";
+        model.id = "007007";
+        model.isSeleted = false;
+        galleryList.add(model);
+
+        Collections.reverse(galleryList);
+
+        return galleryList;
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -128,43 +198,43 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.btnDuesFood:
-                layDuesFood.setBackgroundColor(Color.parseColor("#0ecb91"));
+                layDuesFood.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 layDuesDrinks.setBackgroundColor(0);
                 layDuesMovies.setBackgroundColor(0);
                 layDuesOuting.setBackgroundColor(0);
                 layDuesPersonal.setBackgroundColor(0);
                 layDuesOthers.setBackgroundColor(0);
-                strEventType = "Food";
+                strDueType = "Food";
                 break;
 
             case R.id.btnDuesDrinks:
                 layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(Color.parseColor("#0ecb91"));
+                layDuesDrinks.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 layDuesMovies.setBackgroundColor(0);
                 layDuesOuting.setBackgroundColor(0);
                 layDuesPersonal.setBackgroundColor(0);
                 layDuesOthers.setBackgroundColor(0);
-                strEventType = "Drinks";
+                strDueType = "Drinks";
                 break;
 
             case R.id.btnDuesMovies:
                 layDuesFood.setBackgroundColor(0);
                 layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(Color.parseColor("#0ecb91"));
+                layDuesMovies.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 layDuesOuting.setBackgroundColor(0);
                 layDuesPersonal.setBackgroundColor(0);
                 layDuesOthers.setBackgroundColor(0);
-                strEventType = "Movies";
+                strDueType = "Movies";
                 break;
 
             case R.id.btnDuesOuting:
                 layDuesFood.setBackgroundColor(0);
                 layDuesDrinks.setBackgroundColor(0);
                 layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(Color.parseColor("#0ecb91"));
+                layDuesOuting.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 layDuesPersonal.setBackgroundColor(0);
                 layDuesOthers.setBackgroundColor(0);
-                strEventType = "outing";
+                strDueType = "outing";
                 break;
 
             case R.id.btnDuesPersonal:
@@ -172,9 +242,9 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
                 layDuesDrinks.setBackgroundColor(0);
                 layDuesMovies.setBackgroundColor(0);
                 layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(Color.parseColor("#0ecb91"));
+                layDuesPersonal.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 layDuesOthers.setBackgroundColor(0);
-                strEventType = "Personal";
+                strDueType = "Personal";
                 break;
 
             case R.id.btnDuesOthers:
@@ -183,8 +253,8 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
                 layDuesMovies.setBackgroundColor(0);
                 layDuesOuting.setBackgroundColor(0);
                 layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(Color.parseColor("#0ecb91"));
-                strEventType = "Others";
+                layDuesOthers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                strDueType = "Others";
                 if (other_text.getText().toString().equalsIgnoreCase("Other")) {
                     showOtherCategoryDialog("Other");
                 } else {
@@ -208,22 +278,57 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(getApplicationContext(), "Please fill all the required details to add Dues", Toast.LENGTH_SHORT).show();
             return;
         }
+        GlobalVariables.splitContactAmount.clear();
+        GlobalVariables.splitContactName.clear();
+        GlobalVariables.splitContactNumber.clear();
 
+        if (adapter == null || adapter.getSelected().size() <= 0) {
+            Toast.makeText(getApplicationContext(), "In the shared with section, please select contacts with whom you want to share this dues!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        ArrayList<DuesSharedWithModel> selected = adapter.getSelected();
+
+        for (int i = 0; i < selected.size(); i++) {
+            GlobalVariables.splitContactName.add(selected.get(i).name);
+            GlobalVariables.splitContactImage.add(selected.get(i).image);
+            GlobalVariables.splitContactNumber.add(selected.get(i).number);
+        }
+
+        if (GlobalVariables.splitContactName.size() > 0) {
+            Intent intent = new Intent(this, SplitDueActivity.class);
+            intent.putExtra("fromActivity", "Dues");
+            intent.putExtra(amount_key, strAmount);
+            intent.putExtra(comment_key, strComment);
+            intent.putExtra(duetype_key, strDueType);
+            intent.putExtra(groupID_key, "");
+            intent.putExtra(groupName_key, "");
+            intent.putExtra(groupImage_key, "");
+            startActivityForResult(intent, REQUEST_CODE_ADD_DUES);
+            return;
+        }
+
+        Toast.makeText(getApplicationContext(), "In the shared with section, please select contacts with whom you want to share this dues!", Toast.LENGTH_SHORT).show();
     }
 
     public void showOtherCategoryDialog(String str_category) {
+
         final Dialog dialog = new Dialog(this);
+
         dialog.requestWindowFeature(1);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         dialog.setContentView(R.layout.dialog_add_other);
         dialog.show();
+
         final EditText editAddCategory = (EditText) dialog.findViewById(R.id.editAddCategory);
+
         if (str_category.equalsIgnoreCase("Other")) {
             editAddCategory.setText("");
         } else
             editAddCategory.setText(str_category);
+
         editAddCategory.setSelection(editAddCategory.length());
+
         (dialog.findViewById(R.id.btnDialogOk)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -231,8 +336,8 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(getApplicationContext(), "Please add Category", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                strEventType = editAddCategory.getText().toString();
-                other_text.setText(strEventType);
+                strDueType = editAddCategory.getText().toString();
+                other_text.setText(strDueType);
                 dialog.dismiss();
             }
         });
@@ -250,6 +355,17 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+        GlobalVariables.data.clear();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_ADD_DUES && SplitDueActivity.REQUEST_Split_Code == 1){
+            finish();
+        }
+        if (requestCode == REQUEST_SELECT_CONTACT)
+            init();
+    }
 }

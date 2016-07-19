@@ -54,7 +54,8 @@
         <activity android:name=".GroupSummaryActivity" />
         <activity android:name=".SplitDueActivity" />
         <activity android:name=".FriendProfileActivity" />
-        <activity android:name=".AddGroupDuesActivity"></activity>
+        <activity android:name=".AddGroupDuesActivity" />
+        <activity android:name=".SelectContactActivity"></activity>
     </application>
 
 </manifest>
