@@ -32,7 +32,7 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/txtContactName"
+            android:id="@+id/txtContactNameSplitAdapter"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
@@ -65,13 +65,13 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@id/editAmount"
+                android:id="@+id/editAmountSplitAdapter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="4dp"
                 android:background="@color/white"
-                android:hint="@string/add_dues_amount"
+                android:hint="@string/add_amount"
                 android:inputType="numberDecimal"
                 android:textColor="@color/darkgray"
                 android:textColorHint="@color/darkgray"

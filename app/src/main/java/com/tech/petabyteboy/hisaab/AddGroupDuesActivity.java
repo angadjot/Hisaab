@@ -34,21 +34,21 @@ public class AddGroupDuesActivity extends AppCompatActivity implements View.OnCl
     private TextView other_text;
 
     private Button btnBack;
-    private Button btnDuesDrinks;
-    private Button btnDuesFood;
-    private Button btnDuesMovies;
-    private Button btnDuesOthers;
-    private Button btnDuesOuting;
-    private Button btnDuesPersonal;
+    private Button btnDrinks;
+    private Button btnFood;
+    private Button btnMovies;
+    private Button btnOthers;
+    private Button btnOuting;
+    private Button btnPersonal;
 
     private SimpleDraweeView imgUser;
 
-    private RelativeLayout layDuesDrinks;
-    private RelativeLayout layDuesFood;
-    private RelativeLayout layDuesMovies;
-    private RelativeLayout layDuesOthers;
-    private RelativeLayout layDuesOuting;
-    private RelativeLayout layDuesPersonal;
+    private RelativeLayout layDrinks;
+    private RelativeLayout layFood;
+    private RelativeLayout layMovies;
+    private RelativeLayout layOthers;
+    private RelativeLayout layOuting;
+    private RelativeLayout layPersonal;
 
     private GridView gridSelectedContact;
 
@@ -77,27 +77,27 @@ public class AddGroupDuesActivity extends AppCompatActivity implements View.OnCl
         imgUser = (SimpleDraweeView) findViewById(R.id.imguser);
 
         other_text = (TextView) findViewById(R.id.other_text);
-        other_text.setText(R.string.add_dues_others);
+        other_text.setText(R.string.add_others);
 
-        btnDuesFood = (Button) findViewById(R.id.btnDuesFood);
-        btnDuesFood.setOnClickListener(this);
-        btnDuesDrinks = (Button) findViewById(R.id.btnDuesDrinks);
-        btnDuesDrinks.setOnClickListener(this);
-        btnDuesMovies = (Button) findViewById(R.id.btnDuesMovies);
-        btnDuesMovies.setOnClickListener(this);
-        btnDuesOuting = (Button) findViewById(R.id.btnDuesOuting);
-        btnDuesOuting.setOnClickListener(this);
-        btnDuesPersonal = (Button) findViewById(R.id.btnDuesPersonal);
-        btnDuesPersonal.setOnClickListener(this);
-        btnDuesOthers = (Button) findViewById(R.id.btnDuesOthers);
-        btnDuesOthers.setOnClickListener(this);
+        btnFood = (Button) findViewById(R.id.btnFood);
+        btnFood.setOnClickListener(this);
+        btnDrinks = (Button) findViewById(R.id.btnDrinks);
+        btnDrinks.setOnClickListener(this);
+        btnMovies = (Button) findViewById(R.id.btnMovies);
+        btnMovies.setOnClickListener(this);
+        btnOuting = (Button) findViewById(R.id.btnOuting);
+        btnOuting.setOnClickListener(this);
+        btnPersonal = (Button) findViewById(R.id.btnPersonal);
+        btnPersonal.setOnClickListener(this);
+        btnOthers = (Button) findViewById(R.id.btnOthers);
+        btnOthers.setOnClickListener(this);
 
-        layDuesFood = (RelativeLayout) findViewById(R.id.layDuesFood);
-        layDuesDrinks = (RelativeLayout) findViewById(R.id.layDuesDrinks);
-        layDuesMovies = (RelativeLayout) findViewById(R.id.layDuesMovies);
-        layDuesPersonal = (RelativeLayout) findViewById(R.id.layDuesPersonal);
-        layDuesOthers = (RelativeLayout) findViewById(R.id.layDuesOthers);
-        layDuesOuting = (RelativeLayout) findViewById(R.id.layDuesOuting);
+        layFood = (RelativeLayout) findViewById(R.id.layFood);
+        layDrinks = (RelativeLayout) findViewById(R.id.layDrinks);
+        layMovies = (RelativeLayout) findViewById(R.id.layMovies);
+        layPersonal = (RelativeLayout) findViewById(R.id.layPersonal);
+        layOthers = (RelativeLayout) findViewById(R.id.layOthers);
+        layOuting = (RelativeLayout) findViewById(R.id.layOuting);
         strEventType = "Food";
 
         gridSelectedContact = (GridView) findViewById(R.id.gridSelectedContact);
@@ -118,63 +118,63 @@ public class AddGroupDuesActivity extends AppCompatActivity implements View.OnCl
                 AddDuesIntent();
                 break;
 
-            case R.id.btnDuesFood:
-                layDuesFood.setBackgroundColor(Color.parseColor("#0ecb91"));
-                layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(0);
+            case R.id.btnFood:
+                layFood.setBackgroundColor(Color.parseColor("#0ecb91"));
+                layDrinks.setBackgroundColor(0);
+                layMovies.setBackgroundColor(0);
+                layOuting.setBackgroundColor(0);
+                layPersonal.setBackgroundColor(0);
+                layOthers.setBackgroundColor(0);
                 strEventType = "Food";
                 break;
 
-            case R.id.btnDuesDrinks:
-                layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(Color.parseColor("#0ecb91"));
-                layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(0);
+            case R.id.btnDrinks:
+                layFood.setBackgroundColor(0);
+                layDrinks.setBackgroundColor(Color.parseColor("#0ecb91"));
+                layMovies.setBackgroundColor(0);
+                layOuting.setBackgroundColor(0);
+                layPersonal.setBackgroundColor(0);
+                layOthers.setBackgroundColor(0);
                 strEventType = "Drinks";
                 break;
 
-            case R.id.btnDuesMovies:
-                layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(Color.parseColor("#0ecb91"));
-                layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(0);
+            case R.id.btnMovies:
+                layFood.setBackgroundColor(0);
+                layDrinks.setBackgroundColor(0);
+                layMovies.setBackgroundColor(Color.parseColor("#0ecb91"));
+                layOuting.setBackgroundColor(0);
+                layPersonal.setBackgroundColor(0);
+                layOthers.setBackgroundColor(0);
                 strEventType = "Movies";
                 break;
 
-            case R.id.btnDuesOuting:
-                layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(Color.parseColor("#0ecb91"));
-                layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(0);
+            case R.id.btnOuting:
+                layFood.setBackgroundColor(0);
+                layDrinks.setBackgroundColor(0);
+                layMovies.setBackgroundColor(0);
+                layOuting.setBackgroundColor(Color.parseColor("#0ecb91"));
+                layPersonal.setBackgroundColor(0);
+                layOthers.setBackgroundColor(0);
                 strEventType = "outing";
                 break;
 
-            case R.id.btnDuesPersonal:
-                layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(Color.parseColor("#0ecb91"));
-                layDuesOthers.setBackgroundColor(0);
+            case R.id.btnPersonal:
+                layFood.setBackgroundColor(0);
+                layDrinks.setBackgroundColor(0);
+                layMovies.setBackgroundColor(0);
+                layOuting.setBackgroundColor(0);
+                layPersonal.setBackgroundColor(Color.parseColor("#0ecb91"));
+                layOthers.setBackgroundColor(0);
                 strEventType = "Personal";
                 break;
 
-            case R.id.btnDuesOthers:
-                layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(Color.parseColor("#0ecb91"));
+            case R.id.btnOthers:
+                layFood.setBackgroundColor(0);
+                layDrinks.setBackgroundColor(0);
+                layMovies.setBackgroundColor(0);
+                layOuting.setBackgroundColor(0);
+                layPersonal.setBackgroundColor(0);
+                layOthers.setBackgroundColor(Color.parseColor("#0ecb91"));
                 strEventType = "Others";
                 if (other_text.getText().toString().equalsIgnoreCase("Other")) {
                     showOtherCategoryDialog("Other");

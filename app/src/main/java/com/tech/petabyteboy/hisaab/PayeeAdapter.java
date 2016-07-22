@@ -2,6 +2,7 @@ package com.tech.petabyteboy.hisaab;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,10 +78,10 @@ public class PayeeAdapter extends BaseAdapter {
         try {
             String strName;
 
-            if (duesNumber.get(i).equalsIgnoreCase(SplitDueActivity.userPhone)) {
+            if (duesNumber.get(i).equalsIgnoreCase(AddDuesActivity.userPhone)) {
                 strName = "You";
             } else {
-                strName = ContactManager.getInstance().getName(duesNumber.get(i));
+                strName = DuesSharedWithModel.getName(duesNumber.get(i));
                 if (strName.isEmpty()) {
                     strName = duesNumber.get(i);
                 }
@@ -88,8 +89,15 @@ public class PayeeAdapter extends BaseAdapter {
 
             holder.txtContactName.setText(strName);
 
+            Log.e("PayeeAdapter", "\nDues Values " + i + "\n"
+                    + "Name : " + duesName.get(i) + "\n"
+                    + "Number : " + duesNumber.get(i) + "\n"
+                    + "Image : " + duesImage.get(i));
+
+            Log.e("Payee Adapter","Dues Image : "+duesImage.get(i));
+
             if (duesImage.get(i).toString().isEmpty()) {
-                String strImageUri = ContactManager.getInstance().getImage(duesNumber.get(i));
+                String strImageUri = DuesSharedWithModel.getImage(duesNumber.get(i));
 
                 if (strImageUri == null || strImageUri.isEmpty()) {
                     Uri uri = new Uri.Builder().scheme("res") // "res"
@@ -109,6 +117,6 @@ public class PayeeAdapter extends BaseAdapter {
             e.printStackTrace();
         }
 
-        return null;
+        return view;
     }
 }

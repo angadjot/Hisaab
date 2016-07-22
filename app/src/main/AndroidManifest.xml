@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -55,7 +56,6 @@
         <activity android:name=".SplitDueActivity" />
         <activity android:name=".FriendProfileActivity" />
         <activity android:name=".AddGroupDuesActivity" />
-        <activity android:name=".SelectContactActivity"></activity>
     </application>
 
 </manifest>

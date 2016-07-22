@@ -33,7 +33,7 @@
                     android:layout_marginLeft="60dp"
                     android:gravity="center_vertical|center_horizontal"
                     android:orientation="horizontal"
-                    android:text="@string/add_dues_title"
+                    android:text="@string/add_title"
                     android:textColor="@color/white"
                     android:visibility="visible" />
 
@@ -71,6 +71,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="55dp"
             android:background="@color/empty_back">
 
             <RelativeLayout
@@ -150,7 +151,7 @@
                             android:layout_marginLeft="50dp"
                             android:drawableLeft="@drawable/icon_rupee"
                             android:hint="@string/amount"
-                            android:inputType="text"
+                            android:inputType="numberDecimal"
                             android:textColor="@color/darkgray"
                             android:textColorHint="@color/darkgray"
                             android:textSize="14sp" />
@@ -190,7 +191,7 @@
                     android:orientation="horizontal">
 
                     <RelativeLayout
-                        android:id="@+id/layDuesFood"
+                        android:id="@+id/layFood"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.0"
@@ -203,7 +204,7 @@
                             android:background="@color/white">
 
                             <Button
-                                android:id="@+id/btnDuesFood"
+                                android:id="@+id/btnFood"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:layout_centerHorizontal="true"
@@ -213,9 +214,9 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_below="@id/btnDuesFood"
+                                android:layout_below="@id/btnFood"
                                 android:layout_centerHorizontal="true"
-                                android:text="@string/add_dues_food"
+                                android:text="@string/add_food"
                                 android:textColor="@color/darkgray"
                                 android:textSize="10sp" />
 
@@ -224,7 +225,7 @@
                     </RelativeLayout>
 
                     <RelativeLayout
-                        android:id="@+id/layDuesDrinks"
+                        android:id="@+id/layDrinks"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.0"
@@ -237,7 +238,7 @@
                             android:background="@color/white">
 
                             <Button
-                                android:id="@+id/btnDuesDrinks"
+                                android:id="@+id/btnDrinks"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:layout_centerHorizontal="true"
@@ -247,16 +248,16 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_below="@id/btnDuesDrinks"
+                                android:layout_below="@id/btnDrinks"
                                 android:layout_centerHorizontal="true"
-                                android:text="@string/add_dues_drinks"
+                                android:text="@string/add_drinks"
                                 android:textColor="@color/darkgray"
                                 android:textSize="10sp" />
                         </RelativeLayout>
                     </RelativeLayout>
 
                     <RelativeLayout
-                        android:id="@+id/layDuesMovies"
+                        android:id="@+id/layMovies"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.0"
@@ -269,7 +270,7 @@
                             android:background="@color/white">
 
                             <Button
-                                android:id="@+id/btnDuesMovies"
+                                android:id="@+id/btnMovies"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:layout_centerHorizontal="true"
@@ -279,16 +280,16 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_below="@id/btnDuesMovies"
+                                android:layout_below="@id/btnMovies"
                                 android:layout_centerHorizontal="true"
-                                android:text="@string/add_dues_movie"
+                                android:text="@string/add_movie"
                                 android:textColor="@color/darkgray"
                                 android:textSize="10sp" />
                         </RelativeLayout>
                     </RelativeLayout>
 
                     <RelativeLayout
-                        android:id="@+id/layDuesOuting"
+                        android:id="@+id/layOuting"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.0"
@@ -301,7 +302,7 @@
                             android:background="@color/white">
 
                             <Button
-                                android:id="@+id/btnDuesOuting"
+                                android:id="@+id/btnOuting"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:layout_centerHorizontal="true"
@@ -311,16 +312,16 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_below="@id/btnDuesOuting"
+                                android:layout_below="@id/btnOuting"
                                 android:layout_centerHorizontal="true"
-                                android:text="@string/add_dues_movie"
+                                android:text="@string/add_movie"
                                 android:textColor="@color/darkgray"
                                 android:textSize="10sp" />
                         </RelativeLayout>
                     </RelativeLayout>
 
                     <RelativeLayout
-                        android:id="@+id/layDuesPersonal"
+                        android:id="@+id/layPersonal"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.0"
@@ -333,7 +334,7 @@
                             android:background="@color/white">
 
                             <Button
-                                android:id="@+id/btnDuesPersonal"
+                                android:id="@+id/btnPersonal"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:layout_centerHorizontal="true"
@@ -343,9 +344,9 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_below="@id/btnDuesPersonal"
+                                android:layout_below="@id/btnPersonal"
                                 android:layout_centerHorizontal="true"
-                                android:text="@string/add_dues_personal"
+                                android:text="@string/add_personal"
                                 android:textColor="@color/darkgray"
                                 android:textSize="10sp" />
                         </RelativeLayout>
@@ -353,7 +354,7 @@
 
 
                     <RelativeLayout
-                        android:id="@+id/layDuesOthers"
+                        android:id="@+id/layOthers"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.0"
@@ -366,7 +367,7 @@
                             android:background="@color/white">
 
                             <Button
-                                android:id="@+id/btnDuesOthers"
+                                android:id="@+id/btnOthers"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:layout_centerHorizontal="true"
@@ -377,9 +378,9 @@
                                 android:id="@+id/other_text"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_below="@id/btnDuesOthers"
+                                android:layout_below="@id/btnOthers"
                                 android:layout_centerHorizontal="true"
-                                android:text="@string/add_dues_others"
+                                android:text="@string/add_others"
                                 android:textColor="@color/darkgray"
                                 android:textSize="10sp" />
                         </RelativeLayout>
@@ -405,7 +406,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="@string/add_dues_sharedwith"
+                    android:text="@string/add_sharedwith"
                     android:textColor="@color/darkgray"
                     android:textSize="14sp" />
 
@@ -426,7 +427,6 @@
             </LinearLayout>
 
         </RelativeLayout>
-
 
     </FrameLayout>
 

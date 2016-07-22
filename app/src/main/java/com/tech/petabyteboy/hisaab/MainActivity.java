@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String EmailID;
     private String phoneno;
 
+    public static TextView txtAmount;
+
     Users usr;
 
     @Override
@@ -114,6 +116,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         txtUserName = (TextView) findViewById(R.id.txtUserName);
         txtUserName.setOnClickListener(this);
+
+        txtAmount = (TextView) findViewById(R.id.txtAmount);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
 
@@ -183,6 +187,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.settings:
                 Toast.makeText(this, "Settings is clicked !", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.signout:
+                auth.signOut();
+                startActivity(new Intent(this,SplashScreenActivity.class));
+                finish();
                 break;
         }
 

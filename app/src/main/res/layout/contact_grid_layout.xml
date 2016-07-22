@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="80dp"
-    android:layout_height="wrap_content">
+    android:layout_height="80dp"
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,18 +11,16 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/layUser"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center">
 
             <FrameLayout
-                android:id="@+id/frmQueue"
                 android:layout_width="match_parent"
                 android:layout_height="60dp">
 
                 <com.facebook.drawee.view.SimpleDraweeView
-                    android:id="@+id/imgContact"
+                    android:id="@+id/imgContactGrid"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:contentDescription="@string/app_name"
@@ -43,11 +42,11 @@
                 android:contentDescription="@string/app_name" />
 
             <CheckBox
-                android:id="@+id/imgQueueMultiSelected"
+                android:id="@+id/checkbox"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#00ffffff"
-                android:buttonTint="#00ffffff"
+                android:button="@color/colorPrimary"
                 android:contentDescription="@string/app_name"
                 android:gravity="center"
                 android:scaleType="fitCenter" />
@@ -56,7 +55,7 @@
         <TextView
             android:id="@+id/txtContactName"
             android:layout_width="60dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
@@ -65,5 +64,7 @@
             android:singleLine="false"
             android:textColor="@color/darkgray"
             android:textSize="12sp" />
+
+
     </LinearLayout>
 </RelativeLayout>

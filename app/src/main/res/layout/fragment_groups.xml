@@ -13,18 +13,29 @@
         android:background="@color/empty_back">
 
         <TextView
-            android:id="@+id/txt_nogroups"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:id="@+id/txtGroupListMsg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="12dp"
+            android:gravity="center"
             android:text="@string/no_groups"
-            android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/davy_grey"
-            android:textSize="30sp"
-            tools:targetApi="jelly_bean_mr1"
-            android:layout_gravity="center" />
+            android:textSize="18sp" />
+
+        <ListView
+            android:id="@+id/listGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="8dp"
+            android:background="@color/white"
+            android:cacheColorHint="@color/backgrey"
+            android:divider="@color/dividerColor"
+            android:dividerHeight="1dp"
+            android:listSelector="@color/white"
+            android:scrollbars="none"
+            android:visibility="visible"/>
+
 
     </FrameLayout>
 

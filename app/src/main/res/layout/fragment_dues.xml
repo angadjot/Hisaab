@@ -11,31 +11,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/empty_back"
-        android:paddingTop="10dp"
         android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:paddingLeft="15dp">
+        android:paddingTop="10dp">
 
         <TextView
-            android:id="@+id/txt_nodues"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center"
+            android:id="@+id/txtDuesMsg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:text="@string/no_dues"
-            android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/davy_grey"
-            android:textSize="30sp"
-            tools:targetApi="jelly_bean_mr1"
-            android:visibility="invisible"/>
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/cardList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
     </FrameLayout>
 
@@ -46,6 +42,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_white_24dp"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
 </android.support.design.widget.CoordinatorLayout>

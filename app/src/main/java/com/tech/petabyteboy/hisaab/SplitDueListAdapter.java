@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,16 +20,35 @@ import java.util.HashMap;
 /**
  * Created by petabyteboy on 19/07/16.
  */
-public class SplitAmountListAdapter extends BaseAdapter {
+public class SplitDueListAdapter extends BaseAdapter {
 
     ArrayList<String> contactName;
     ArrayList<String> contactNumber;
     Context context;
     DataTransferInterface dtInterface;
-    ArrayList<String> expenseAmount;
+    ArrayList<String> duesAmount;
     HashMap<Integer, View> hashMap;
     ArrayList<String> imageAdd;
     Boolean onedit;
+
+    public class Holder {
+        EditText editAmount;
+        SimpleDraweeView friendImage;
+        TextView txtContactName;
+        TextView rupeesymbol;
+    }
+
+    public SplitDueListAdapter(Context context, ArrayList<String> contactName, ArrayList<String> contactNumber, ArrayList<String> imageAdd, ArrayList<String> duesAmount, Boolean is_toggle, DataTransferInterface dtInterface) {
+
+        hashMap = new HashMap<>();
+        this.context = context;
+        this.imageAdd = imageAdd;
+        this.contactName = contactName;
+        this.contactNumber = contactNumber;
+        this.duesAmount = duesAmount;
+        this.dtInterface = dtInterface;
+        onedit = is_toggle;
+    }
 
     @Override
     public int getCount() {
@@ -58,16 +78,18 @@ public class SplitAmountListAdapter extends BaseAdapter {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = layoutInflater.inflate(R.layout.list_split_amount, null);
 
-        holder.txtContactName = (TextView) view.findViewById(R.id.txtContactName);
-        holder.editAmount = (EditText) view.findViewById(R.id.editAmount);
+        holder.txtContactName = (TextView) view.findViewById(R.id.txtContactNameSplitAdapter);
+        holder.editAmount = (EditText) view.findViewById(R.id.editAmountSplitAdapter);
         holder.friendImage = (SimpleDraweeView) view.findViewById(R.id.friendImage);
         holder.rupeesymbol = (TextView) view.findViewById(R.id.rupeesymbol);
 
-        if (onedit.booleanValue()) {
+        if (onedit) {
+            Log.e("SplitDuesList","Adapter : Inside onedit : "+onedit);
             holder.editAmount.setTextColor(context.getResources().getColor(R.color.black));
             holder.editAmount.setEnabled(false);
             holder.rupeesymbol.setTextColor(context.getResources().getColor(R.color.black));
         } else {
+            Log.e("SplitDuesList","Adapter : Inside onedit : "+onedit);
             holder.editAmount.setTextColor(context.getResources().getColor(R.color.colorPrimary));
             holder.editAmount.setEnabled(true);
             holder.rupeesymbol.setTextColor(context.getResources().getColor(R.color.colorPrimary));
@@ -77,20 +99,33 @@ public class SplitAmountListAdapter extends BaseAdapter {
         holder.editAmount.setTag(i);
         holder.friendImage.setTag(i);
 
-        if (contactNumber.get(i).toString().equalsIgnoreCase(SplitDueActivity.userPhone)) {
+        if (contactNumber.get(i).equalsIgnoreCase(AddDuesActivity.userPhone)) {
             strName = "You";
         } else {
-            strName = ContactManager.getInstance().getName(contactName.get(i).toString());
+            strName = DuesSharedWithModel.getName(contactNumber.get(i));
             if (strName.isEmpty()) {
                 strName = contactNumber.get(i);
             }
         }
 
+        if (strName.contains(" ") && strName.length() > 16) {
+            if (strName.indexOf(" ") < strName.length() - 2) {
+                strName = strName.substring(0, strName.indexOf(" ") + 2);
+            } else {
+                strName = strName.substring(0, strName.indexOf(" "));
+            }
+        }
+
+        Log.e("SplitDuesList","Adapter strName : "+strName);
         holder.txtContactName.setText(strName);
 
-        if (!expenseAmount.get(i).toString().isEmpty()) {
-            holder.editAmount.setText(String.valueOf(Double.parseDouble(expenseAmount.get(i))));
+        Log.e("SplitDuesList","Adapter Dues Amount "+i+" : "+duesAmount.get(i));
+        if (!duesAmount.get(i).equalsIgnoreCase("")) {
+            holder.editAmount.setText(String.valueOf(Double.parseDouble(duesAmount.get(i))));
         }
+
+        final int position = i;
+
         holder.editAmount.setId(i);
         holder.editAmount.addTextChangedListener(new TextWatcher() {
             @Override
@@ -100,10 +135,12 @@ public class SplitAmountListAdapter extends BaseAdapter {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().equalsIgnoreCase(String.valueOf(Double.parseDouble(expenseAmount.get(i))))
+
+                if (!charSequence.toString().equalsIgnoreCase(duesAmount.get(position))
                         && charSequence.toString().length() > 0 && !charSequence.toString().isEmpty()
                         && !charSequence.toString().equalsIgnoreCase(".")) {
-                    dtInterface.setTotal(charSequence.toString(), i);
+                    Log.e("SplitDuesList","Adapter Inside onTextChanged : Position : "+position);
+                    dtInterface.setTotal(charSequence.toString(), position);
                 }
 
             }
@@ -115,7 +152,7 @@ public class SplitAmountListAdapter extends BaseAdapter {
         });
 
         if (imageAdd.get(i).isEmpty()) {
-            String strImageUri = ContactManager.getInstance().getImage(contactNumber.get(i)).toString();
+            String strImageUri = DuesSharedWithModel.getImage(contactNumber.get(i));
 
             if (strImageUri == null) {
                 Uri uri = new Uri.Builder().scheme("res") // "res"
@@ -133,32 +170,5 @@ public class SplitAmountListAdapter extends BaseAdapter {
 
         hashMap.put(i,view);
         return view;
-    }
-
-    public class Holder {
-        EditText editAmount;
-        SimpleDraweeView friendImage;
-        TextView txtContactName;
-        TextView rupeesymbol;
-    }
-
-    public SplitAmountListAdapter(Context context, ArrayList<String> contactName, ArrayList<String> contactNumber, ArrayList<String> imageAdd, ArrayList<String> expenseAmount, Boolean is_toggle, DataTransferInterface dtInterface) {
-
-        imageAdd = new ArrayList<>();
-        contactName = new ArrayList<>();
-        contactNumber = new ArrayList<>();
-        expenseAmount = new ArrayList<>();
-        hashMap = new HashMap<>();
-        this.context = context;
-        this.imageAdd = imageAdd;
-        this.contactName = contactName;
-        this.contactNumber = contactNumber;
-        this.expenseAmount = expenseAmount;
-        this.dtInterface = dtInterface;
-        onedit = is_toggle;
-    }
-
-    public interface DataTransferInterface {
-        void setTotal(String str, int i);
     }
 }

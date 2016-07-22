@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -22,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.facebook.drawee.view.GenericDraweeView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,12 +32,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class SplitDueActivity extends AppCompatActivity implements View.OnClickListener {
+public class SplitDueActivity extends AppCompatActivity implements View.OnClickListener, DataTransferInterface {
 
-    public static int REQUEST_Split_Code = 0;
+    public static int REQUEST_CODE_SPLIT = 0;
 
-    private ImageButton btnDuesCross;
-    private Button btnDuesDone;
+    private ImageButton btnCross;
+    private Button btnDone;
 
     private SimpleDraweeView imgProfile;
     private TextView changepayee;
@@ -48,19 +46,19 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
     private EditText editAmount;
     private EditText editComment;
 
-    private Button btnDuesFood;
-    private Button btnDuesDrinks;
-    private Button btnDuesMovies;
-    private Button btnDuesOuting;
-    private Button btnDuesPersonal;
-    private Button btnDuesOthers;
+    private Button btnFood;
+    private Button btnDrinks;
+    private Button btnMovies;
+    private Button btnOuting;
+    private Button btnPersonal;
+    private Button btnOthers;
 
-    private RelativeLayout layDuesDrinks;
-    private RelativeLayout layDuesFood;
-    private RelativeLayout layDuesMovies;
-    private RelativeLayout layDuesOthers;
-    private RelativeLayout layDuesOuting;
-    private RelativeLayout layDuesPersonal;
+    private RelativeLayout layDrinks;
+    private RelativeLayout layFood;
+    private RelativeLayout layMovies;
+    private RelativeLayout layOthers;
+    private RelativeLayout layOuting;
+    private RelativeLayout layPersonal;
     private RelativeLayout other_layout;
     private TextView other_text;
 
@@ -73,9 +71,10 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
     private TextView txtTotalAmount;
 
     private String edittexttotalamount;
+    public static String payeeType;
 
     private ArrayList<String> duesAmount;
-    private ArrayList<String> duesId = new ArrayList<>();
+    private ArrayList<String> duesId;
     private ArrayList<String> duesImage;
     private ArrayList<String> duesName;
     private ArrayList<String> duesNumber;
@@ -83,14 +82,14 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
     private boolean is_amount_item_changed = false;
     private boolean is_payee_changed = false;
     private boolean is_toggle = true;
+    private boolean is_update = false;
 
     private String strAmount;
     private String strComment;
     private String strGroupId;
     private String strGroupImage;
-    private String strGroupTitle;
+    private String strGroupName;
     private String strDueType;
-    private String strExpID;
     private String strFromActivity;
     private String strRefType;
     private String strType;
@@ -100,49 +99,18 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
     private String PayeeNo;
     private String add_dues_shared_amount;
 
-    //FireBase Database
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference userdataReference;
-    private DatabaseReference duesdataReference;
-    private FirebaseAuth auth;
-    private FirebaseUser user;
+    private String userName;
+    private String userPhone;
 
-    public Users usr = new Users();
-    public static String userName;
-    public static String userPhone;
-    public static String payeeType;
+    SplitDueListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_split_due);
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
-
-        String uid = user.getUid();
-
-        userdataReference = firebaseDatabase.getReference().child("Users").child(uid);
-        duesdataReference = firebaseDatabase.getReference().child("Dues").child(uid);
-
-        userdataReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                usr = dataSnapshot.getValue(Users.class);
-
-                userName = usr.getUsername();
-                userPhone = usr.getPhoneNumber();
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        userName = AddDuesActivity.userName;
+        userPhone = AddDuesActivity.userPhone;
 
         strFromActivity = getIntent().getExtras().getString("fromActivity");
 
@@ -150,27 +118,31 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         strComment = getIntent().getExtras().getString(AddDuesActivity.comment_key);
         strDueType = getIntent().getExtras().getString(AddDuesActivity.duetype_key);
         strGroupId = getIntent().getExtras().getString(AddDuesActivity.groupID_key);
-        strExpID = getIntent().getExtras().getString("ExpId");
-        strGroupTitle = getIntent().getExtras().getString(AddDuesActivity.groupName_key);
+        strGroupName = getIntent().getExtras().getString(AddDuesActivity.groupName_key);
         strGroupImage = getIntent().getExtras().getString(AddDuesActivity.groupImage_key);
 
-        btnDuesCross = (ImageButton) findViewById(R.id.btn_cross);
-        btnDuesCross.setOnClickListener(this);
+        Log.e("SplitDuesActivity", "strFromActivity : " + strFromActivity + "\n"
+                + "strAmount : " + strAmount + "\n" + "strComment : " + strComment + "\n"
+                + "strDueType : " + strDueType + "\n" + "strGroupId : " + strGroupId + "\n"
+                + "strGroupName : " + strGroupName + "\n" + "strGroupImage : " + strGroupImage + "\n");
 
-        txtUserName = (TextView) findViewById(R.id.txtUserName);
+        btnCross = (ImageButton) findViewById(R.id.btn_cross);
+        btnCross.setOnClickListener(this);
 
-        btnDuesDone = (Button) findViewById(R.id.btn_done);
-        btnDuesDone.setOnClickListener(this);
+        txtUserName = (TextView) findViewById(R.id.txtUserNameSplit);
 
-        txtTotalAmount = (TextView) findViewById(R.id.txtTotalAmount);
+        btnDone = (Button) findViewById(R.id.btn_done);
+        btnDone.setOnClickListener(this);
+
+        txtTotalAmount = (TextView) findViewById(R.id.txtTotalAmountSplit);
         txtTotalAmount.setText(String.valueOf(Double.parseDouble(strAmount.replace(",", ""))));
 
-        imgProfile = (SimpleDraweeView) findViewById(R.id.imgProfile);
+        imgProfile = (SimpleDraweeView) findViewById(R.id.imgProfileSplit);
 
         profileBottomLayout = (LinearLayout) findViewById(R.id.profileBottomLayout);
         other_layout = (RelativeLayout) findViewById(R.id.other_layout);
 
-        editAmount = (EditText) findViewById(R.id.editAmount);
+        editAmount = (EditText) findViewById(R.id.editamountSplit);
         editAmount.setText(String.valueOf(Double.parseDouble(strAmount.replace(",", ""))));
         edittexttotalamount = String.valueOf(Double.parseDouble(strAmount.replace(",", "")));
         editAmount.setVisibility(View.VISIBLE);
@@ -178,24 +150,34 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         editAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!is_amount_item_changed && !editAmount.getText().toString().equalsIgnoreCase(strAmount)
-                        && editAmount.getText().toString().length() > 0
-                        && !editAmount.getText().toString().equalsIgnoreCase(".")) {
-                    Float amtDivide = Float.valueOf(editAmount.getText().toString()) / ((float) duesName.size());
-                    duesAmount.clear();
-                    for (int count = 0; count < duesName.size(); count++) {
-                        duesAmount.add("" + amtDivide);
-                    }
-                    strAmount = editAmount.getText().toString();
-                    setAdapter(is_toggle);
-                    txtTotalAmount.setText(String.valueOf(Double.parseDouble(strAmount)));
-                    edittexttotalamount = charSequence.toString();
-                }
+
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+                if (!is_amount_item_changed && !editAmount.getText().toString().equalsIgnoreCase(strAmount)
+                        && editAmount.getText().toString().length() > 0
+                        && !editAmount.getText().toString().equalsIgnoreCase(".")) {
+
+                    Float amtDivide = Float.valueOf(editAmount.getText().toString()) / ((float) duesName.size());
+
+                    duesAmount.clear();
+
+                    for (int count = 0; count < duesName.size(); count++) {
+                        duesAmount.add("" + amtDivide);
+                    }
+
+                    strAmount = editAmount.getText().toString();
+                    setSplitAdapter(is_toggle);
+                    txtTotalAmount.setText(String.valueOf(Double.parseDouble(strAmount)));
+                    edittexttotalamount = charSequence.toString();
+
+                    Log.e("SplitDueActivity", "onTextChange"
+                            + "\nDivide Amount " + amtDivide + "\nName Size :" + duesName.size()
+                            + "\nAmount Size : " + duesAmount.size() + "\nstrAmount " + strAmount
+                            + "\nis_toggle " + is_toggle + "\n edittexttotalamount" + edittexttotalamount);
+                }
             }
 
             @Override
@@ -210,120 +192,172 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
             public void onClick(View view) {
 
                 if (toggleButtonedit.isChecked()) {
-                    setAdapter(toggleButtonedit.isChecked());
+                    Log.e("SplitDuesActivity", "Inside Toggle Button : Toggle Button : " + toggleButtonedit.isChecked());
+                    setSplitAdapter(toggleButtonedit.isChecked());
                     is_toggle = true;
                     return;
                 }
-                setAdapter(toggleButtonedit.isChecked());
+                Log.e("SplitDuesActivity", "Inside Toggle Button : Toggle Button : " + toggleButtonedit.isChecked());
+                setSplitAdapter(toggleButtonedit.isChecked());
                 is_toggle = false;
             }
         });
 
-        editComment = (EditText) findViewById(R.id.editComment);
+        editComment = (EditText) findViewById(R.id.editCommentSplit);
         editComment.setText(strComment);
 
-        layDuesFood = (RelativeLayout) findViewById(R.id.layDuesFood);
-        layDuesDrinks = (RelativeLayout) findViewById(R.id.layDuesDrinks);
-        layDuesMovies = (RelativeLayout) findViewById(R.id.layDuesMovies);
-        layDuesPersonal = (RelativeLayout) findViewById(R.id.layDuesPersonal);
-        layDuesOthers = (RelativeLayout) findViewById(R.id.layDuesOthers);
-        layDuesOuting = (RelativeLayout) findViewById(R.id.layDuesOuting);
+        layFood = (RelativeLayout) findViewById(R.id.layFood);
+        layDrinks = (RelativeLayout) findViewById(R.id.layDrinks);
+        layMovies = (RelativeLayout) findViewById(R.id.layMovies);
+        layPersonal = (RelativeLayout) findViewById(R.id.layPersonal);
+        layOthers = (RelativeLayout) findViewById(R.id.layOthers);
+        layOuting = (RelativeLayout) findViewById(R.id.layOuting);
         other_text = (TextView) findViewById(R.id.other_text);
 
         changepayee = (TextView) findViewById(R.id.changepayee);
         changepayee.setOnClickListener(this);
 
-        btnDuesFood = (Button) findViewById(R.id.btnDuesFood);
-        btnDuesFood.setOnClickListener(this);
+        btnFood = (Button) findViewById(R.id.btnFood);
+        btnFood.setOnClickListener(this);
 
-        btnDuesDrinks = (Button) findViewById(R.id.btnDuesDrinks);
-        btnDuesDrinks.setOnClickListener(this);
+        btnDrinks = (Button) findViewById(R.id.btnDrinks);
+        btnDrinks.setOnClickListener(this);
 
-        btnDuesMovies = (Button) findViewById(R.id.btnDuesMovies);
-        btnDuesMovies.setOnClickListener(this);
+        btnMovies = (Button) findViewById(R.id.btnMovies);
+        btnMovies.setOnClickListener(this);
 
-        btnDuesOuting = (Button) findViewById(R.id.btnDuesOuting);
-        btnDuesOuting.setOnClickListener(this);
+        btnOuting = (Button) findViewById(R.id.btnOuting);
+        btnOuting.setOnClickListener(this);
 
-        btnDuesPersonal = (Button) findViewById(R.id.btnDuesPersonal);
-        btnDuesPersonal.setOnClickListener(this);
+        btnPersonal = (Button) findViewById(R.id.btnPersonal);
+        btnPersonal.setOnClickListener(this);
 
-        btnDuesOthers = (Button) findViewById(R.id.btnDuesOthers);
-        btnDuesOthers.setOnClickListener(this);
+        btnOthers = (Button) findViewById(R.id.btnOthers);
+        btnOthers.setOnClickListener(this);
 
         duesAmount = new ArrayList<>();
         duesName = new ArrayList<>();
         duesNumber = new ArrayList<>();
         duesImage = new ArrayList<>();
+        duesId = new ArrayList<>();
 
         for (int i = 0; i < GlobalVariables.splitContactNumber.size(); i++) {
             duesName.add(GlobalVariables.splitContactName.get(i));
             duesNumber.add(GlobalVariables.splitContactNumber.get(i));
             duesImage.add(GlobalVariables.splitContactImage.get(i));
-            if (strFromActivity.contains("Update")) {
-                duesId.add(GlobalVariables.splitContactId.get(i));
-            }
+
+            Log.e("SplitDueActivity", "\nDues Values " + i + "\n"
+                    + "Name : " + duesName.get(i) + "\n"
+                    + "Number : " + duesNumber.get(i) + "\n"
+                    + "Image : " + duesImage.get(i));
         }
+
+        String strName;
+        String strImage;
+
+        strName = userName;
+        // strImage = get from firebase database
+        strImage = "";
 
         txtUserName.setText("You paid");
         payeeType = "iGET";
+
+        if (strImage.equalsIgnoreCase("")) {
+            String imguri = DuesSharedWithModel.getImage(userPhone);
+            Log.e("SplitDuesActivity", "Users Image URI " + imguri);
+            if (imguri.equalsIgnoreCase("") || imguri == null) {
+                Uri uri = new Uri.Builder().scheme("res") // "res"
+                        .path(String.valueOf(R.drawable.icon_placeholder)).build();
+                imgProfile.setImageURI(uri);
+            } else {
+                imgProfile.setImageURI(imguri);
+            }
+        } else {
+            imgProfile.setImageURI(strImage);
+        }
+
+        duesNumber.add(userPhone);
+        duesImage.add(strImage); //Get Image from firebase database
+        duesName.add("YOU");
 
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) other_layout.getLayoutParams();
         lp.setMargins(15, 15, 15, 15);
         other_layout.setLayoutParams(lp);
 
         if (strFromActivity.contains("Dues")) {
+            initDues();
             if (strDueType.equalsIgnoreCase("Food"))
-                changeBackgroundDues(0);
-            else if (strDueType.equalsIgnoreCase("Drink"))
-                changeBackgroundDues(1);
+                layFood.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            else if (strDueType.equalsIgnoreCase("Drinks"))
+                layDrinks.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             else if (strDueType.equalsIgnoreCase("Movies"))
-                changeBackgroundDues(2);
+                layMovies.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             else if (strDueType.equalsIgnoreCase("Outing"))
-                changeBackgroundDues(3);
+                layOuting.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             else if (strDueType.equalsIgnoreCase("Personal"))
-                changeBackgroundDues(4);
+                layPersonal.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             else {
                 other_text.setText(strDueType);
-                changeBackgroundDues(5);
+                layOthers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             }
         } else {
 
+            initDues();
             profileBottomLayout.setVisibility(View.VISIBLE);
             if (strDueType.equalsIgnoreCase("Food")) {
-                changeBackgroundDues(0);
-            } else if (strDueType.equalsIgnoreCase("Drink")) {
-                changeBackgroundDues(1);
+                layFood.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            } else if (strDueType.equalsIgnoreCase("Drinks")) {
+                layDrinks.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             } else if (strDueType.equalsIgnoreCase("Movies")) {
-                changeBackgroundDues(2);
+                layMovies.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             } else if (strDueType.equalsIgnoreCase("Outing")) {
-                changeBackgroundDues(3);
+                layOuting.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             } else if (strDueType.equalsIgnoreCase("Personal")) {
-                changeBackgroundDues(4);
+                layPersonal.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             } else {
                 other_text.setText(strDueType);
-                changeBackgroundDues(5);
+                layOthers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             }
         }
 
-        if (strFromActivity.contains("Updates")) {
-            for (int i = 0; i < GlobalVariables.splitContactAmount.size(); i++) {
-                duesAmount.add(GlobalVariables.splitContactAmount.get(i));
-            }
-        } else {
-            Float amtDivide = Float.valueOf(strAmount) / ((float) duesName.size());
-            for (int i = 0; i < duesName.size(); i++) {
-                duesAmount.add("" + amtDivide);
-            }
+
+        Float amtDivide = Float.valueOf(strAmount) / ((float) duesName.size());
+
+        Log.e("SplitDuesActivity", "amtDivide : " + amtDivide);
+
+        for (int i = 0; i < duesName.size(); i++) {
+            duesAmount.add("" + amtDivide);
+
+            Log.e("SplitDuesActivity", "Dues Amount " + i + " : " + duesAmount.get(i));
         }
-        listSharedWith = (ListView) findViewById(R.id.listSharedWith);
-        setAdapter(is_toggle);
+
+        Log.e("SplitDuesActivity", "DuesName Size : " + duesName.size() + "\nDuesAmount Size : " + duesAmount.size());
+
+        //Debug
+        for (int i = 0; i < duesNumber.size(); i++) {
+            Log.e("SplitDuesActivity", "Dues values " + i
+                    + "\n Name : " + duesName.get(i) + "\n Number : " + duesNumber.get(i)
+                    + "\n Image : " + duesImage.get(i) + "\n Due Amount : " + duesAmount.get(i));
+        }
+
+        listSharedWith = (ListView) findViewById(R.id.listSharedWithSplit);
+        setSplitAdapter(is_toggle);
 
 
     }
 
-    public void setAdapter(Boolean is_toggle) {
-        listSharedWith.setAdapter(new SplitAmountListAdapter(this, duesName, duesNumber, duesImage, duesAmount, is_toggle, (SplitAmountListAdapter.DataTransferInterface) this));
+    public void setSplitAdapter(Boolean is_toggle) {
+
+        Log.e("SplitDuesActivity", "Inside setAdapter :\nAdater is_toggle : " + is_toggle);
+
+        if (adapter == null){
+            listSharedWith = (ListView) findViewById(R.id.listSharedWithSplit);
+            adapter = new SplitDueListAdapter(this,duesName,duesNumber,duesImage,duesAmount,is_toggle,this);
+            listSharedWith.setAdapter(adapter);
+            return;
+        }
+        adapter = new SplitDueListAdapter(this,duesName,duesNumber,duesImage,duesAmount,is_toggle,this);
+        listSharedWith.setAdapter(adapter);
     }
 
     @Override
@@ -334,63 +368,63 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                 showAlertDialog(this, txtUserName, imgProfile);
                 break;
 
-            case R.id.btnDuesFood:
-                layDuesFood.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(0);
+            case R.id.btnFood:
+                layFood.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                layDrinks.setBackgroundColor(0);
+                layMovies.setBackgroundColor(0);
+                layOuting.setBackgroundColor(0);
+                layPersonal.setBackgroundColor(0);
+                layOthers.setBackgroundColor(0);
                 strDueType = "Food";
                 break;
 
-            case R.id.btnDuesDrinks:
-                layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(0);
+            case R.id.btnDrinks:
+                layFood.setBackgroundColor(0);
+                layDrinks.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                layMovies.setBackgroundColor(0);
+                layOuting.setBackgroundColor(0);
+                layPersonal.setBackgroundColor(0);
+                layOthers.setBackgroundColor(0);
                 strDueType = "Drinks";
                 break;
 
-            case R.id.btnDuesMovies:
-                layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(0);
+            case R.id.btnMovies:
+                layFood.setBackgroundColor(0);
+                layDrinks.setBackgroundColor(0);
+                layMovies.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                layOuting.setBackgroundColor(0);
+                layPersonal.setBackgroundColor(0);
+                layOthers.setBackgroundColor(0);
                 strDueType = "Movies";
                 break;
 
-            case R.id.btnDuesOuting:
-                layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(0);
-                strDueType = "outing";
+            case R.id.btnOuting:
+                layFood.setBackgroundColor(0);
+                layDrinks.setBackgroundColor(0);
+                layMovies.setBackgroundColor(0);
+                layOuting.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                layPersonal.setBackgroundColor(0);
+                layOthers.setBackgroundColor(0);
+                strDueType = "Outing";
                 break;
 
-            case R.id.btnDuesPersonal:
-                layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                layDuesOthers.setBackgroundColor(0);
+            case R.id.btnPersonal:
+                layFood.setBackgroundColor(0);
+                layDrinks.setBackgroundColor(0);
+                layMovies.setBackgroundColor(0);
+                layOuting.setBackgroundColor(0);
+                layPersonal.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                layOthers.setBackgroundColor(0);
                 strDueType = "Personal";
                 break;
 
-            case R.id.btnDuesOthers:
-                layDuesFood.setBackgroundColor(0);
-                layDuesDrinks.setBackgroundColor(0);
-                layDuesMovies.setBackgroundColor(0);
-                layDuesOuting.setBackgroundColor(0);
-                layDuesPersonal.setBackgroundColor(0);
-                layDuesOthers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            case R.id.btnOthers:
+                layFood.setBackgroundColor(0);
+                layDrinks.setBackgroundColor(0);
+                layMovies.setBackgroundColor(0);
+                layOuting.setBackgroundColor(0);
+                layPersonal.setBackgroundColor(0);
+                layOthers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 strDueType = "Others";
                 if (other_text.getText().toString().equalsIgnoreCase("Other")) {
                     showOtherCategoryDialog("Other");
@@ -419,7 +453,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                     value = value + ".00";
                 }
                 if (!value.equalsIgnoreCase(txtTotalAmount.getText().toString())) {
-                    Toast.makeText(this, "Amount splitted doesn't match with the Total Amount", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Amount Splitted doesn't match with the Total Amount", Toast.LENGTH_SHORT).show();
                 } else if (String.valueOf(Double.parseDouble(value)).equalsIgnoreCase("0.00") || String.valueOf(Double.parseDouble(value)).equalsIgnoreCase(".00")) {
                     Toast.makeText(this, "Amount should be greater than Rs 0.00", Toast.LENGTH_SHORT).show();
                 } else {
@@ -431,31 +465,13 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void changeBackgroundDues(int value) {
-        initDues();
-        switch (value) {
-            case 0:
-                layDuesFood.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            case 1:
-                this.layDuesDrinks.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            case 2:
-                this.layDuesMovies.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            case 3:
-                this.layDuesOuting.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            case 4:
-                this.layDuesPersonal.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            case 5:
-                this.layDuesOthers.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        }
-    }
-
     private void initDues() {
-        layDuesFood.setBackgroundColor(0);
-        layDuesDrinks.setBackgroundColor(0);
-        layDuesMovies.setBackgroundColor(0);
-        layDuesOuting.setBackgroundColor(0);
-        layDuesPersonal.setBackgroundColor(0);
-        layDuesOthers.setBackgroundColor(0);
+        layFood.setBackgroundColor(0);
+        layDrinks.setBackgroundColor(0);
+        layMovies.setBackgroundColor(0);
+        layOuting.setBackgroundColor(0);
+        layPersonal.setBackgroundColor(0);
+        layOthers.setBackgroundColor(0);
     }
 
     @Override
@@ -492,7 +508,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                     usrname = "You";
                     payeeType = "iGET";
                 } else {
-                    usrname = ContactManager.getInstance().getName(duesNumber.get(i));
+                    usrname = DuesSharedWithModel.getName(duesNumber.get(i));
                     payeeType = "iPAY";
                     if (usrname.isEmpty()) {
                         usrname = duesNumber.get(i);
@@ -500,7 +516,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 if (duesImage.get(i).isEmpty()) {
-                    String strImageUri = ContactManager.getInstance().getImage(duesNumber.get(i));
+                    String strImageUri = DuesSharedWithModel.getImage(duesNumber.get(i));
 
                     if (strImageUri == null) {
                         Uri uri = new Uri.Builder().scheme("res") // "res"
@@ -514,7 +530,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 update_position = i;
-                txtUserName.setText(usrname + "Paid");
+                txtUserName.setText(usrname + " Paid");
                 is_payee_changed = true;
                 PayeeNo = duesNumber.get(i);
                 dialog.dismiss();
@@ -596,6 +612,8 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
         String strNumber = String.valueOf(sb);
 
+        Toast.makeText(this, "All Dues Number List : " + strNumber, Toast.LENGTH_SHORT).show();
+
         ArrayList<String> Send_Push_Number = new ArrayList<>();
         Send_Push_Number.addAll(duesNumber);
 
@@ -612,6 +630,26 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         String strAmtDivided = String.valueOf(sbAmt);
         add_dues_shared_amount = strAmtDivided;
 
+        Toast.makeText(this, "All Dues Amount List : " + add_dues_shared_amount, Toast.LENGTH_SHORT).show();
+
+        // Add Expense in Database
 
     }
+
+    public void setTotal(String amt, int pos) {
+
+        float amount = 0.0f;
+
+        duesAmount.set(pos, amt);
+
+        for (int i = 0; i < duesAmount.size(); i++) {
+            amount += Float.valueOf(duesAmount.get(i));
+        }
+
+        txtTotalAmount.setText(String.valueOf(amount));
+        edittexttotalamount = String.valueOf(amount);
+        editAmount.setVisibility(View.VISIBLE);
+        is_amount_item_changed = true;
+    }
+
 }

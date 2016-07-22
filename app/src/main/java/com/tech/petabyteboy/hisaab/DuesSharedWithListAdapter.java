@@ -2,6 +2,7 @@ package com.tech.petabyteboy.hisaab;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,7 @@ public class DuesSharedWithListAdapter extends BaseAdapter {
     public class Holder {
         ImageView imgCheckedImage;
         SimpleDraweeView imgProfile;
-        CheckBox imgQueueMultiSelected;
+        CheckBox checkbox;
         TextView txtContactName;
     }
 
@@ -60,25 +61,45 @@ public class DuesSharedWithListAdapter extends BaseAdapter {
         final Holder holder = new Holder();
 
         holder.txtContactName = (TextView) view.findViewById(R.id.txtContactName);
-        holder.imgProfile = (SimpleDraweeView) view.findViewById(R.id.imgProfile);
+        holder.imgProfile = (SimpleDraweeView) view.findViewById(R.id.imgContactGrid);
         holder.imgCheckedImage = (ImageView) view.findViewById(R.id.imgCheckedImage);
-        holder.imgQueueMultiSelected = (CheckBox) view.findViewById(R.id.imgQueueMultiSelected);
+        holder.checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 
         final int position = i;
 
-        holder.imgQueueMultiSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
                 DuesSharedWithModel model = GlobalVariables.data.get(position);
 
                 if (model.isSeleted) {
+                    Log.e("DuesShared", "WithList Adapter Inside isSelected : " + model.isSeleted);
+
                     model.isSeleted = false;
                     GlobalVariables.data.set(position, model);
+
+                    Log.e("DuesShared", "WithListAdapter GlobalVariables.data Values \n"
+                            + "Name : " + GlobalVariables.data.get(position).getName() + "\n"
+                            + "Number : " + GlobalVariables.data.get(position).getNumber() + "\n"
+                            + "Image : " + GlobalVariables.data.get(position).getImage() + "\n"
+                            + "AddBtn : " + GlobalVariables.data.get(position).getAddBtn() + "\n"
+                            + "isSelected : " + GlobalVariables.data.get(position).isSeleted() + "\n");
+
                     holder.imgCheckedImage.setVisibility(View.GONE);
                 } else {
+                    Log.e("DuesShared", "WithList Adapter Inside isSelected : " + model.isSeleted);
+
                     model.isSeleted = true;
                     GlobalVariables.data.set(position, model);
+
+                    Log.e("DuesShared", "WithListAdapter GlobalVariables.data Values \n"
+                            + "Name : " + GlobalVariables.data.get(position).getName() + "\n"
+                            + "Number : " + GlobalVariables.data.get(position).getNumber() + "\n"
+                            + "Image : " + GlobalVariables.data.get(position).getImage() + "\n"
+                            + "AddBtn : " + GlobalVariables.data.get(position).getAddBtn() + "\n"
+                            + "isSelected : " + GlobalVariables.data.get(position).isSeleted() + "\n");
+
                     holder.imgCheckedImage.setVisibility(View.VISIBLE);
                 }
             }
@@ -93,29 +114,30 @@ public class DuesSharedWithListAdapter extends BaseAdapter {
                 holder.imgCheckedImage.setVisibility(View.GONE);
 
             if (model.addBtn.equalsIgnoreCase("yes")) {
+                Log.e("DuesShared", "WithListAdapter \n AddBtn : yes \n Name : " + model.name);
                 holder.txtContactName.setText(model.name);
-                holder.imgQueueMultiSelected.setVisibility(View.GONE);
+                holder.checkbox.setVisibility(View.GONE);
                 holder.imgCheckedImage.setVisibility(View.GONE);
             } else {
-                String name = ContactManager.getInstance().getName(model.number);
-                if (name.isEmpty() || name.equalsIgnoreCase("")) {
+                String name = model.name;
+                if (name.isEmpty()) {
                     name = model.number;
                 }
                 holder.txtContactName.setText(name);
 
-                if (model.image.isEmpty() || model.image.equalsIgnoreCase("")) {
-                    String strImageUri = ContactManager.getInstance().getImage(model.number);
+                String imgUri = model.image;
+                if (imgUri.isEmpty()) {
+                    Uri uri = new Uri.Builder().scheme("res") // "res"
+                            .path(String.valueOf(R.drawable.icon_placeholder)).build();
 
-                    if (strImageUri == null || strImageUri.isEmpty() || strImageUri.equalsIgnoreCase("")) {
-                        //test This first
-                        Uri uri = new Uri.Builder().scheme("res") // "res"
-                                .path(String.valueOf(R.drawable.icon_placeholder)).build();
-                        holder.imgProfile.setImageURI(uri);
-                    } else {
-                        holder.imgProfile.setImageURI(Uri.parse(strImageUri));
-                    }
+                    Log.e("DuesShared", "WithListAdapter \n Inside model.image : Empty \n Image Uri :" + uri);
+
+                    holder.imgProfile.setImageURI(uri);
+
                 } else {
-                    holder.imgProfile.setImageURI(model.image);
+                    Log.e("DuesShared", "WithListAdapter \nName : " + model.name + "\nNumber : " + model.number
+                            + "\nImage URI : " + imgUri);
+                    holder.imgProfile.setImageURI(imgUri);
                 }
 
             }
@@ -133,7 +155,7 @@ public class DuesSharedWithListAdapter extends BaseAdapter {
 
         ArrayList<DuesSharedWithModel> dataSelected = new ArrayList<>();
         for (int i = 0; i < GlobalVariables.data.size(); i++) {
-            if ( GlobalVariables.data.get(i).isSeleted ) {
+            if (GlobalVariables.data.get(i).isSeleted) {
                 dataSelected.add(GlobalVariables.data.get(i));
             }
         }
