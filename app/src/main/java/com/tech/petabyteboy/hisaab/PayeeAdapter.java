@@ -1,6 +1,7 @@
 package com.tech.petabyteboy.hisaab;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,8 @@ public class PayeeAdapter extends BaseAdapter {
     ArrayList<String> duesImage;
     ArrayList<String> duesName;
     ArrayList<String> duesNumber;
+
+    private String TAG = "PayeeAdapter";
 
     public class Holder {
         ImageView friendImage;
@@ -78,7 +81,7 @@ public class PayeeAdapter extends BaseAdapter {
         try {
             String strName;
 
-            if (duesNumber.get(i).equalsIgnoreCase(AddDuesActivity.userPhone)) {
+            if (duesNumber.get(i).equalsIgnoreCase(AddDuesActivity.UserID)) {
                 strName = "You";
             } else {
                 strName = DuesSharedWithModel.getName(duesNumber.get(i));
@@ -89,12 +92,12 @@ public class PayeeAdapter extends BaseAdapter {
 
             holder.txtContactName.setText(strName);
 
-            Log.e("PayeeAdapter", "\nDues Values " + i + "\n"
+            Log.e(TAG, "\nDues Values " + i + "\n"
                     + "Name : " + duesName.get(i) + "\n"
                     + "Number : " + duesNumber.get(i) + "\n"
                     + "Image : " + duesImage.get(i));
 
-            Log.e("Payee Adapter","Dues Image : "+duesImage.get(i));
+            Log.e(TAG,"Dues Image : "+duesImage.get(i));
 
             if (duesImage.get(i).toString().isEmpty()) {
                 String strImageUri = DuesSharedWithModel.getImage(duesNumber.get(i));

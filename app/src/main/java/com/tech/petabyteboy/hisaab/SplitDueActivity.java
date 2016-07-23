@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.FloatProperty;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,15 +23,18 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.twitter.sdk.android.core.models.User;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class SplitDueActivity extends AppCompatActivity implements View.OnClickListener, DataTransferInterface {
 
@@ -74,7 +78,6 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
     public static String payeeType;
 
     private ArrayList<String> duesAmount;
-    private ArrayList<String> duesId;
     private ArrayList<String> duesImage;
     private ArrayList<String> duesName;
     private ArrayList<String> duesNumber;
@@ -82,7 +85,6 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
     private boolean is_amount_item_changed = false;
     private boolean is_payee_changed = false;
     private boolean is_toggle = true;
-    private boolean is_update = false;
 
     private String strAmount;
     private String strComment;
@@ -91,26 +93,34 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
     private String strGroupName;
     private String strDueType;
     private String strFromActivity;
-    private String strRefType;
-    private String strType;
-
     int update_position;
 
     private String PayeeNo;
-    private String add_dues_shared_amount;
 
-    private String userName;
-    private String userPhone;
+    private static String strPhoneNo;
+    private static String strUserName;
+    private static String strUserImage;
 
-    SplitDueListAdapter adapter;
+    private SplitDueListAdapter adapter;
+
+    // FireBase Database
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference duesdataReference;
+
+    private String TAG = "SplitDueActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_split_due);
 
-        userName = AddDuesActivity.userName;
-        userPhone = AddDuesActivity.userPhone;
+        strUserName = AddDuesActivity.User.getUsername();
+        strPhoneNo = AddDuesActivity.User.getPhoneNumber();
+        strUserImage = AddDuesActivity.User.getImage();
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        duesdataReference = firebaseDatabase.getReference().child("Dues");
 
         strFromActivity = getIntent().getExtras().getString("fromActivity");
 
@@ -135,7 +145,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         btnDone.setOnClickListener(this);
 
         txtTotalAmount = (TextView) findViewById(R.id.txtTotalAmountSplit);
-        txtTotalAmount.setText(String.valueOf(Double.parseDouble(strAmount.replace(",", ""))));
+        txtTotalAmount.setText(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount.replace(",", "")))));
 
         imgProfile = (SimpleDraweeView) findViewById(R.id.imgProfileSplit);
 
@@ -143,8 +153,8 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         other_layout = (RelativeLayout) findViewById(R.id.other_layout);
 
         editAmount = (EditText) findViewById(R.id.editamountSplit);
-        editAmount.setText(String.valueOf(Double.parseDouble(strAmount.replace(",", ""))));
-        edittexttotalamount = String.valueOf(Double.parseDouble(strAmount.replace(",", "")));
+        editAmount.setText(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount.replace(",", "")))));
+        edittexttotalamount = String.valueOf(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount.replace(",", "")))));
         editAmount.setVisibility(View.VISIBLE);
 
         editAmount.addTextChangedListener(new TextWatcher() {
@@ -170,7 +180,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
                     strAmount = editAmount.getText().toString();
                     setSplitAdapter(is_toggle);
-                    txtTotalAmount.setText(String.valueOf(Double.parseDouble(strAmount)));
+                    txtTotalAmount.setText(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount))));
                     edittexttotalamount = charSequence.toString();
 
                     Log.e("SplitDueActivity", "onTextChange"
@@ -239,7 +249,6 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         duesName = new ArrayList<>();
         duesNumber = new ArrayList<>();
         duesImage = new ArrayList<>();
-        duesId = new ArrayList<>();
 
         for (int i = 0; i < GlobalVariables.splitContactNumber.size(); i++) {
             duesName.add(GlobalVariables.splitContactName.get(i));
@@ -255,19 +264,18 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         String strName;
         String strImage;
 
-        strName = userName;
-        // strImage = get from firebase database
-        strImage = "";
+        strName = strUserName;
+        strImage = strUserImage;
 
         txtUserName.setText("You paid");
         payeeType = "iGET";
 
         if (strImage.equalsIgnoreCase("")) {
-            String imguri = DuesSharedWithModel.getImage(userPhone);
+            String imguri = DuesSharedWithModel.getImage(strPhoneNo);
             Log.e("SplitDuesActivity", "Users Image URI " + imguri);
             if (imguri.equalsIgnoreCase("") || imguri == null) {
                 Uri uri = new Uri.Builder().scheme("res") // "res"
-                        .path(String.valueOf(R.drawable.icon_placeholder)).build();
+                        .path(String.valueOf(R.drawable.profile_pic_home)).build();
                 imgProfile.setImageURI(uri);
             } else {
                 imgProfile.setImageURI(imguri);
@@ -276,7 +284,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
             imgProfile.setImageURI(strImage);
         }
 
-        duesNumber.add(userPhone);
+        duesNumber.add(strPhoneNo);
         duesImage.add(strImage); //Get Image from firebase database
         duesName.add("YOU");
 
@@ -320,7 +328,6 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
             }
         }
 
-
         Float amtDivide = Float.valueOf(strAmount) / ((float) duesName.size());
 
         Log.e("SplitDuesActivity", "amtDivide : " + amtDivide);
@@ -349,14 +356,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
     public void setSplitAdapter(Boolean is_toggle) {
 
         Log.e("SplitDuesActivity", "Inside setAdapter :\nAdater is_toggle : " + is_toggle);
-
-        if (adapter == null){
-            listSharedWith = (ListView) findViewById(R.id.listSharedWithSplit);
-            adapter = new SplitDueListAdapter(this,duesName,duesNumber,duesImage,duesAmount,is_toggle,this);
-            listSharedWith.setAdapter(adapter);
-            return;
-        }
-        adapter = new SplitDueListAdapter(this,duesName,duesNumber,duesImage,duesAmount,is_toggle,this);
+        adapter = new SplitDueListAdapter(this, duesName, duesNumber, duesImage, duesAmount, is_toggle, this);
         listSharedWith.setAdapter(adapter);
     }
 
@@ -441,6 +441,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
                 String str_value;
                 String value = editAmount.getText().toString();
+
                 int index = value.indexOf(".");
                 if (index != -1) {
                     str_value = value.substring(index + 1, value.length());
@@ -452,12 +453,16 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                 } else {
                     value = value + ".00";
                 }
+
+                Log.e("SplitDueActivity", "Value : " + value);
+                //Log.e("SplitDueActivity", "Total Amount : " + formatDecimal(txtTotalAmount.getText().toString()));
                 if (!value.equalsIgnoreCase(txtTotalAmount.getText().toString())) {
                     Toast.makeText(this, "Amount Splitted doesn't match with the Total Amount", Toast.LENGTH_SHORT).show();
-                } else if (String.valueOf(Double.parseDouble(value)).equalsIgnoreCase("0.00") || String.valueOf(Double.parseDouble(value)).equalsIgnoreCase(".00")) {
+                } else if (MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(value))).equalsIgnoreCase("0.00")
+                        || MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(value))).equalsIgnoreCase(".00")) {
                     Toast.makeText(this, "Amount should be greater than Rs 0.00", Toast.LENGTH_SHORT).show();
                 } else {
-                    addDuesIntent();
+                    AddDuesIntent();
                 }
 
                 break;
@@ -504,7 +509,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 String usrname;
-                if (duesNumber.get(i).equalsIgnoreCase(userPhone)) {
+                if (duesNumber.get(i).equalsIgnoreCase(strPhoneNo)) {
                     usrname = "You";
                     payeeType = "iGET";
                 } else {
@@ -534,7 +539,6 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                 is_payee_changed = true;
                 PayeeNo = duesNumber.get(i);
                 dialog.dismiss();
-
             }
         });
     }
@@ -573,19 +577,26 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private void addDuesIntent() {
+    private void AddDuesIntent() {
 
         if (strAmount.isEmpty()) {
             Toast.makeText(getApplicationContext(), "Please Enter all Details.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (is_payee_changed) {
-            if (!PayeeNo.equalsIgnoreCase(userPhone)) {
+            Log.e("SplitDuesActivity", "Inside is_payee_changed : " + is_payee_changed);
+            if (!PayeeNo.equalsIgnoreCase(strPhoneNo)) {
                 duesNumber.remove(PayeeNo);
                 duesNumber.add(PayeeNo);
                 String updateamt = duesAmount.get(update_position);
                 duesAmount.remove(update_position);
                 duesAmount.add(updateamt);
+                String updateName = duesName.get(update_position);
+                duesName.remove(update_position);
+                duesName.add(updateName);
+                String updateImage = duesImage.get(update_position);
+                duesImage.remove(update_position);
+                duesImage.add(updateImage);
             }
         }
 
@@ -612,29 +623,148 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
         String strNumber = String.valueOf(sb);
 
-        Toast.makeText(this, "All Dues Number List : " + strNumber, Toast.LENGTH_SHORT).show();
-
-        ArrayList<String> Send_Push_Number = new ArrayList<>();
-        Send_Push_Number.addAll(duesNumber);
+        Log.e("SplitDuesActivity", "strNumber : " + strNumber);
 
         StringBuilder sbAmt = new StringBuilder();
         int amtCount = duesAmount.size();
 
-        for (int count = 0; count < amtCount; i++) {
-            sbAmt.append(duesAmount.get(i));
+        for (int count = 0; count < amtCount; count++) {
+            sbAmt.append(duesAmount.get(count));
             if (count != amtCount - 1) {
                 sbAmt.append(",");
             }
         }
 
         String strAmtDivided = String.valueOf(sbAmt);
-        add_dues_shared_amount = strAmtDivided;
+        Log.e("SplitDuesActivity", "strAmtDivide : " + strAmtDivided);
 
-        Toast.makeText(this, "All Dues Amount List : " + add_dues_shared_amount, Toast.LENGTH_SHORT).show();
+        StringBuilder sbName = new StringBuilder();
+        int sizeName = duesName.size();
 
-        // Add Expense in Database
+        for (int count = 0; count < sizeName; count++) {
+            if (duesName.get(count).equalsIgnoreCase("You")) {
+                sbName.append(strUserName);
+            } else {
+                sbName.append(duesName.get(count));
+            }
+            if (count != sizeName - 1) {
+                sbName.append(",");
+            }
+        }
+        String strNames = String.valueOf(sbName);
+        Log.e("SplitDuesActivity", "strNames : " + strNames);
+        //Add Dues in Database
+
+        StringBuilder sbImage = new StringBuilder();
+        int sizeImage = duesImage.size();
+
+        for (int count = 0; count < sizeImage; count++) {
+            sbImage.append(duesImage.get(count));
+            if (count != sizeImage - 1) {
+                sbImage.append(",");
+            }
+        }
+        String strImage = String.valueOf(sbImage);
+        Log.e("SplitDuesActivity", "strImage : " + strImage);
+
+        Log.e("SplitDuesActivity", "Total Amount : " + strAmount);
+
+        Log.e("SplitDuesActivity", "\nDues Name : " + strNames
+                + "\nDues Number : " + strNumber
+                + "\nDues Image : " + strImage
+                + "\nDues Amount : " + strAmtDivided);
+
+        AddDuesFirebase(strNames, strNumber, strImage, strAmtDivided);
+
 
     }
+
+    private void AddDuesFirebase(String SharedNames, String SharedNumbers, String SharedImages, String SharedAmt) {
+
+        final ArrayList<String> UserDueIDList = new ArrayList<>();
+        final boolean[] flag_exist = {false};
+        UserDuesModel userDuesModel = new UserDuesModel();
+
+        String cDateTime = DateFormat.getDateTimeInstance().format(new Date());
+        Log.e(TAG, "Date : " + cDateTime);
+
+        Log.e(TAG, "Number Size : " + duesNumber.size());
+
+        /*
+
+        for (int i = 0; i < duesNumber.size(); i++) {
+
+            Log.e(TAG, "flag Exist : " + flag_exist[0]);
+
+            if (flag_exist[0]) {
+                UserDueIDList.add(duesNumber.get(i));
+            } else {
+                Users userModel = new Users();
+                userModel.setUserID(duesNumber.get(i));
+                userModel.setPhoneNumber(duesNumber.get(i));
+                userModel.setUsername(duesName.get(i));
+                userModel.setImage(duesImage.get(i));
+                userModel.setDateOfBirth("");
+                userModel.setGender("");
+                userModel.setCity("");
+                userModel.setEmailID("");
+                userRef.child(duesNumber.get(i)).setValue(userModel);
+                UserDueIDList.add(duesNumber.get(i));
+            }
+        }
+
+        */
+
+        if (is_payee_changed) {
+            if (!PayeeNo.equalsIgnoreCase(strPhoneNo)) {
+
+                userDuesModel.setCategory(strDueType);
+                userDuesModel.setComment(strComment);
+                userDuesModel.setDate_time(cDateTime);
+                int index = 0;
+                for (int i = 0; i < duesNumber.size(); i++) {
+                    if (duesNumber.get(i).equalsIgnoreCase(PayeeNo)) {
+                        index = i;
+                        break;
+                    }
+                }
+                userDuesModel.setSelf_amt(duesAmount.get(index));
+                userDuesModel.setShared_User_id(SharedNumbers);
+                userDuesModel.setShared_User_Name(SharedNames);
+                userDuesModel.setShared_User_Image(SharedImages);
+                userDuesModel.setShared_User_Amt(SharedAmt);
+                userDuesModel.setShared_among(String.valueOf(duesNumber.size()));
+                userDuesModel.setTotal_amt(strAmount);
+                userDuesModel.setWho_paid_id(PayeeNo);
+
+            }
+
+        } else {
+            userDuesModel.setCategory(strDueType);
+            userDuesModel.setComment(strComment);
+            userDuesModel.setDate_time(cDateTime);
+            int index = 0;
+            for (int i = 0; i < duesNumber.size(); i++) {
+                if (duesNumber.get(i).equalsIgnoreCase(strPhoneNo)) {
+                    index = i;
+                    break;
+                }
+            }
+            userDuesModel.setSelf_amt(duesAmount.get(index));
+            userDuesModel.setShared_User_id(SharedNumbers);
+            userDuesModel.setShared_User_Name(SharedNames);
+            userDuesModel.setShared_User_Image(SharedImages);
+            userDuesModel.setShared_User_Amt(SharedAmt);
+            userDuesModel.setShared_among(String.valueOf(duesNumber.size()));
+            userDuesModel.setTotal_amt(strAmount);
+            userDuesModel.setWho_paid_id(strPhoneNo);
+        }
+
+        for (int i = 0; i < duesNumber.size(); i++) {
+            duesdataReference.child(duesNumber.get(i)).child(userDuesModel.getDate_time()).setValue(userDuesModel);
+        }
+    }
+
 
     public void setTotal(String amt, int pos) {
 
@@ -642,14 +772,19 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
         duesAmount.set(pos, amt);
 
+        Log.e("SplitDueActivity", "setTotal Check : Dues Amount : " + duesAmount.get(pos));
+
         for (int i = 0; i < duesAmount.size(); i++) {
-            amount += Float.valueOf(duesAmount.get(i));
+            amount += Float.valueOf(duesAmount.get(i).toString()).floatValue();
         }
 
-        txtTotalAmount.setText(String.valueOf(amount));
-        edittexttotalamount = String.valueOf(amount);
+        Log.e("SplitDueActivity", "Amount : " + MainActivity.ConvertDouble(Double.valueOf(amount)));
+
+        txtTotalAmount.setText(MainActivity.ConvertDouble(Double.valueOf(amount)));
+        edittexttotalamount = MainActivity.ConvertDouble(Double.valueOf(amount));
         editAmount.setVisibility(View.VISIBLE);
         is_amount_item_changed = true;
+
     }
 
 }

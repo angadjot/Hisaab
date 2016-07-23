@@ -4,14 +4,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -29,31 +29,36 @@ import java.io.File;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static final int REQUEST_CODE_GALLERY = 1;
+    public static final int REQUEST_CODE_TAKE_PICTURE = 2;
+    public static final String TEMP_PHOTO_FILE_NAME = "hisaab.jpg";
+
     public static String strPhoneNo;
     public static String strUserName;
 
     private Button btnRegister;
+
     private EditText editName;
     private EditText editPhoneNo;
     private SimpleDraweeView imgUserProfile;
+
+    private File mFileTemp;
+
+    private String TAG = "RegisterActivity";
 
     public static final String username_key = "UserName";
     public static final String phonenumber_key = "PhoneNumber";
     public static final String imgProfile_key = "ProfilePic";
     public static final String userID_key = "UserID";
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int REQUEST_IMAGE_GET = 2;
-
-    public static boolean flag_camera = false;
-    public static boolean flag_gallery = false;
-
-    private Uri outputFileUri;
-    private Uri galleryUri;
+    private Uri outputFileUri = null;
+    private Uri galleryUri = null;
 
     DigitsAuthButton digitsButton;
 
     private String UserID;
+
+    public static final String PREF_NAME = "User";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +97,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 break;
 
             case R.id.btn_register:
-                registerUser();
+
+                strPhoneNo = editPhoneNo.getText().toString();
+                strUserName = editName.getText().toString();
+
+                if (strUserName.isEmpty() || strUserName.equalsIgnoreCase("")) {
+                    Toast.makeText(this, "Kindly enter all details", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (strPhoneNo.isEmpty() || strPhoneNo.length() != 10) {
+                    Toast.makeText(this, "Please enter valid phone number", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    SharedPreferences user_detail = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+                    SharedPreferences.Editor user_edit = user_detail.edit();
+                    user_edit.putString("phone", strPhoneNo);
+                    Log.e(TAG, "Phone No : " + strPhoneNo);
+                    user_edit.apply();
+                    showVerifyOTPDialog(this);
+                }
                 break;
         }
     }
@@ -104,20 +126,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         dialog.setContentView(R.layout.dialog_select_profile_pic);
         dialog.show();
-        ( dialog.findViewById(R.id.btnCross)).setOnClickListener(new View.OnClickListener() {
+        (dialog.findViewById(R.id.btnCross)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
             }
         });
-        ( dialog.findViewById(R.id.btnCamera)).setOnClickListener(new View.OnClickListener() {
+        (dialog.findViewById(R.id.btnCamera)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 capturePhoto();
                 dialog.dismiss();
             }
         });
-        ( dialog.findViewById(R.id.btnGallery)).setOnClickListener(new View.OnClickListener() {
+        (dialog.findViewById(R.id.btnGallery)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 selectImage();
@@ -129,10 +151,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private void capturePhoto() {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        outputFileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "imgProfile.jpg"));
+        if ("mounted".equals(Environment.getExternalStorageState())) {
+            mFileTemp = new File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME);
+        } else {
+            mFileTemp = new File(getFilesDir(), TEMP_PHOTO_FILE_NAME);
+        }
+        outputFileUri = Uri.fromFile(mFileTemp);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
         }
     }
 
@@ -141,7 +168,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, REQUEST_IMAGE_GET);
+            startActivityForResult(intent, REQUEST_CODE_GALLERY);
         }
     }
 
@@ -149,41 +176,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if ((requestCode == REQUEST_IMAGE_CAPTURE && resultCode == -1) || (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)) {
+        if ((requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == -1) || (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == RESULT_OK)) {
 
             imgUserProfile.setImageURI(outputFileUri);
-            flag_camera = true;
             return;
         }
 
-        if ((requestCode == REQUEST_IMAGE_GET && resultCode == -1) || (requestCode == REQUEST_IMAGE_GET && resultCode == RESULT_OK)) {
+        if ((requestCode == REQUEST_CODE_GALLERY && resultCode == -1) || (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK)) {
 
             galleryUri = data.getData();
 
             imgUserProfile.setImageURI(galleryUri);
-            flag_gallery = true;
             return;
         }
 
-    }
-
-    private void registerUser() {
-
-        if (TextUtils.isEmpty(editName.getText().toString())) {
-            Toast.makeText(this, "Kindly enter all details", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (TextUtils.isEmpty(editPhoneNo.getText().toString()) || editPhoneNo.getText().toString().length() != 10) {
-            Toast.makeText(this, "Please enter valid phone number", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-
-        strPhoneNo = editPhoneNo.getText().toString();
-        strUserName = editName.getText().toString();
-
-        showVerifyOTPDialog(this);
     }
 
     public void showVerifyOTPDialog(Context c) {
@@ -193,7 +199,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         dialog.setContentView(R.layout.dialog_verify_otp);
         dialog.show();
-        ( dialog.findViewById(R.id.btnCross)).setOnClickListener(new View.OnClickListener() {
+        (dialog.findViewById(R.id.btnCross)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
@@ -231,12 +237,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         Intent intent = new Intent(RegisterActivity.this, RegisterProfileActivity.class);
         intent.putExtra(username_key, strUserName);
-        intent.putExtra(phonenumber_key, strPhoneNo);
         intent.putExtra(userID_key, UserID);
-        if (flag_camera && outputFileUri != null)
+
+        if (outputFileUri != null)
             intent.putExtra(imgProfile_key, outputFileUri.toString());
-        if (flag_gallery && galleryUri != null)
+        else if (galleryUri != null)
             intent.putExtra(imgProfile_key, galleryUri.toString());
+        else
+            intent.putExtra(imgProfile_key, "");
+
         startActivity(intent);
         finish();
 

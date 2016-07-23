@@ -5,12 +5,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -40,8 +40,6 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
 
     private DatePickerDialog DatePicker;
 
-    private Button btn_done;
-    private Button btn_later;
     private SimpleDateFormat dateFormatter;
 
     private EditText editEmail;
@@ -56,31 +54,43 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
     public static String strCity;
     public static String strEmailID;
     public static String strPassword;
-    public static Uri imgProfile;
+    public static String strImage;
 
     private FirebaseAuth mAuth;
-    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private FirebaseDatabase firebaseDatabase;
     private DatabaseReference userDataRef;
-    private DatabaseReference regUserDataRef;
-    private FirebaseStorage storage;
     private StorageReference storeRef;
 
-    private static final String TAG = "Hisaab";
+    private FirebaseUser User;
+
+    private Users user;
+
+    private static final String TAG = "RegisterProfileActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_profile);
 
-        strPhoneNo = getIntent().getExtras().getString(RegisterActivity.phonenumber_key);
+        SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME,MODE_PRIVATE);
+
+        strPhoneNo = userPref.getString("phone",null);
         strUserName = getIntent().getExtras().getString(RegisterActivity.username_key);
         strPassword = getIntent().getExtras().getString(RegisterActivity.userID_key);
+        strImage = getIntent().getExtras().getString(RegisterActivity.imgProfile_key);
 
-        Log.e("UserID", strPassword);
+        Log.e(TAG, "\nstrPhoneNo : " + strPhoneNo + "\nstrUserName : " + strUserName + "\nstrPassWord : " + strPassword + "\nstrImage : " + strImage);
 
-        if (RegisterActivity.flag_camera || RegisterActivity.flag_gallery) {
-            imgProfile = Uri.parse(getIntent().getExtras().getString(RegisterActivity.imgProfile_key));
+        user = new Users();
+        user.setUsername(strUserName);
+        user.setPhoneNumber(strPhoneNo);
+        user.setUserID(strPhoneNo);
+        user.setExists(true);
+        if (!strImage.equalsIgnoreCase("") || !strImage.isEmpty()) {
+            user.setImage(strImage);
         }
+
+        Log.e(TAG, "Saved in SharedPref : " + strPhoneNo);
 
         txt_dob = (TextView) findViewById(R.id.txt_dob);
         txt_dob.setOnClickListener(this);
@@ -92,10 +102,10 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
 
         editEmail = (EditText) findViewById(R.id.editEmail);
 
-        btn_later = (Button) findViewById(R.id.btn_later);
+        Button btn_later = (Button) findViewById(R.id.btn_later);
         btn_later.setOnClickListener(this);
 
-        btn_done = (Button) findViewById(R.id.btn_done);
+        Button btn_done = (Button) findViewById(R.id.btn_done);
         btn_done.setOnClickListener(this);
 
         dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -103,13 +113,12 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
         SelectDate();
 
         mAuth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
 
         userDataRef = firebaseDatabase.getReference();
 
-        regUserDataRef = firebaseDatabase.getReference().child("Registered Users List");
-
-        storage = FirebaseStorage.getInstance();
-        storeRef =  storage.getReference("Profile Pics");
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storeRef = storage.getReference("Profile Pics");
 
     }
 
@@ -133,25 +142,12 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
         switch (view.getId()) {
 
             case R.id.btn_later:
-                if (TextUtils.isEmpty(editEmail.getText().toString())) {
-                    Toast.makeText(this, "Please Enter Email ID.", Toast.LENGTH_SHORT).show();
-                    break;
-                } else {
-                    strEmailID = editEmail.getText().toString();
-                    createAccountLater(strEmailID, strPassword);
-                    signIn(strEmailID, strPassword);
-                }
+                RegisterUserLater();
                 break;
 
             case R.id.btn_done:
-                if (checkFields()) {
-                    strCity = txtCountry.getText().toString();
-                    strEmailID = editEmail.getText().toString();
-                    createAccount(strEmailID, strPassword);
-                    signIn(strEmailID, strPassword);
-                    break;
-                } else
-                    break;
+                RegisterUser();
+                break;
 
             case R.id.txt_gender:
                 showSelectGenderDialog(this);
@@ -173,7 +169,7 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
             public void onDateSet(android.widget.DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                String str_showDate = dateFormatter.format(newDate.getTime()).toString();
+                String str_showDate = dateFormatter.format(newDate.getTime());
                 txt_dob.setText(str_showDate);
                 strDOB = str_showDate;
             }
@@ -190,74 +186,134 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         dialog.setContentView(R.layout.dialog_select_gender);
         dialog.show();
-        ((Button) dialog.findViewById(R.id.btnCross)).setOnClickListener(new View.OnClickListener() {
+        dialog.findViewById(R.id.btnCross).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
             }
         });
-        ((Button) dialog.findViewById(R.id.btnMale)).setOnClickListener(new View.OnClickListener() {
+        dialog.findViewById(R.id.btnMale).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
                 strGender = "Male";
-                txt_gender.setText("Male");
+                txt_gender.setText(strGender);
             }
         });
-        ((Button) dialog.findViewById(R.id.btnFemale)).setOnClickListener(new View.OnClickListener() {
+        dialog.findViewById(R.id.btnFemale).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
                 strGender = "Female";
-                txt_gender.setText("Female");
+                txt_gender.setText(strGender);
             }
         });
-        ((Button) dialog.findViewById(R.id.btnDialogOther)).setOnClickListener(new View.OnClickListener() {
+        dialog.findViewById(R.id.btnDialogOther).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
                 strGender = "Other";
-                txt_gender.setText("Other");
+                txt_gender.setText(strGender);
             }
         });
     }
 
-    private boolean checkFields() {
+    private void RegisterUserLater() {
 
-        if (TextUtils.isEmpty(txt_dob.getText().toString())
-                || TextUtils.isEmpty(txt_gender.getText().toString())
-                || txt_gender.getText().toString().equalsIgnoreCase("Gender")
-                || TextUtils.isEmpty(txtCountry.getText().toString())
-                || txtCountry.getText().toString().equalsIgnoreCase("City")
-                || TextUtils.isEmpty(editEmail.getText().toString())) {
-            Toast.makeText(this, "Please Enter any of detail and press Done.", Toast.LENGTH_SHORT).show();
-            return false;
+        strEmailID = editEmail.getText().toString();
+
+        if (strEmailID.isEmpty() || strEmailID.equalsIgnoreCase("")){
+            Toast.makeText(this, "Please Enter any of detail and then press Later.", Toast.LENGTH_SHORT).show();
+            return;
+        }else {
+            user.setEmailID(strEmailID);
+            Log.e(TAG,"EmailID : "+strEmailID);
         }
 
-        return true;
+        createAccount(strEmailID, strPassword);
+
+        signIn(strEmailID, strPassword);
+
+        MainActivityIntent();
+
     }
 
-    private void createAccountLater(String email, String password) {
+    private void RegisterUser() {
+        strDOB = txt_dob.getText().toString();
+        strGender = txt_gender.getText().toString();
+        strCity = txtCountry.getText().toString();
+        strEmailID = editEmail.getText().toString();
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        if (strDOB.isEmpty()) {
+            Toast.makeText(this, "Please Enter any of detail and press Done.", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            user.setDateOfBirth(strDOB);
+        }
+
+
+        if (strGender.isEmpty() || strGender.equalsIgnoreCase("Gender")) {
+            Toast.makeText(this, "Please Enter any of detail and press Done.", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            user.setGender(strGender);
+        }
+
+        if (strCity.isEmpty() || strCity.equalsIgnoreCase("City")) {
+            Toast.makeText(this, "Please Enter any of detail and press Done.", Toast.LENGTH_SHORT).show();
+            return;
+        } else
+            user.setCity(strCity);
+
+        if (strEmailID.isEmpty()) {
+            Toast.makeText(this, "Please Enter any of detail and press Done.", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            user.setEmailID(strEmailID);
+        }
+
+        createAccount(strEmailID, strPassword);
+
+        signIn(strEmailID, strPassword);
+
+        MainActivityIntent();
+
+    }
+
+    private void MainActivityIntent() {
+
+        mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                User = firebaseAuth.getCurrentUser();
+            }
+        });
+
+        if (User != null) {
+
+            if (strImage != null && !strImage.equalsIgnoreCase("null")) {
+                storeRef.child(user.getUserID()).child("Images").putFile(Uri.parse(strImage)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(RegisterProfileActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            FirebaseUser user = task.getResult().getUser();
-                            createUserDatabaseLater(user);
-                            createRegisterDatabase(user);
-                            if (imgProfile != null)
-                                uploadProfilePic(user);
-                        }
-
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Uri uri = taskSnapshot.getDownloadUrl();
+                        Log.e(TAG, "Image URI : " + uri);
+                        user.setImage(String.valueOf(uri));
                     }
                 });
+            }
 
+            Log.e(TAG, "Users Detail : \nUsername = " + user.getUsername() + "\nImage = " + user.getImage() +
+                    "\nPhoneNumber = " + user.getPhoneNumber() + "\nGender = " + user.getGender() +
+                    "\nEmailID = " + user.getEmailID() + "\nCity = " + user.getCity() +
+                    "\nDateOfBirth = " + user.getDateOfBirth() + "\nUserID = " + user.getUserID());
+
+            userDataRef.child("Users").child(user.getUserID()).setValue(user);
+
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("PhoneNo", strPhoneNo);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private void createAccount(String email, String password) {
@@ -266,47 +322,16 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                        Log.e(TAG, "createUserWithEmail : onComplete : " + task.isSuccessful());
                         if (!task.isSuccessful()) {
                             Toast.makeText(RegisterProfileActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            FirebaseUser user = task.getResult().getUser();
-                            createUserDatabase(user);
-                            createRegisterDatabase(user);
-                            if (imgProfile != null)
-                                uploadProfilePic(user);
+                            User = task.getResult().getUser();
                         }
 
                     }
                 });
-
-    }
-
-    private void createUserDatabaseLater(FirebaseUser user) {
-        String uid = user.getUid();
-
-        Users usr = new Users(strUserName, strPhoneNo, strEmailID);
-        userDataRef.child("Users").child(uid).setValue(usr);
-
-    }
-    
-    private void createRegisterDatabase(FirebaseUser user){
-        
-        String uid = user.getUid();
-
-        regUserDataRef.child(strPhoneNo);
-        regUserDataRef.child(strPhoneNo).child("Name").setValue(strUserName);
-        regUserDataRef.child(strPhoneNo).child("User ID").setValue(uid);
-        
-        
-    }
-
-    private void createUserDatabase(FirebaseUser user) {
-        String uid = user.getUid();
-
-        Users usr = new Users(strUserName, strPhoneNo, strDOB, strGender, strCity, strEmailID);
-        userDataRef.child("Users").child(uid).setValue(usr);
 
     }
 
@@ -319,27 +344,16 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
                         if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail", task.getException());
+                            Log.e(TAG, "signInWithEmail : ", task.getException());
                             Toast.makeText(RegisterProfileActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            finish();
+                            Log.e(TAG, "Log in Sucessfull");
                         }
-
                     }
+
                 });
     }
 
-    private void uploadProfilePic(FirebaseUser user){
-        String uid = user.getUid();
 
-        storeRef.child(uid).child("ProfilePic").putFile(imgProfile).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(getApplicationContext(),"Profile Pic Uploaded Link:"+taskSnapshot.getMetadata().getDownloadUrl(),Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
 }

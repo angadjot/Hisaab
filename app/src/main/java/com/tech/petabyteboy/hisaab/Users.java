@@ -13,29 +13,45 @@ public class Users {
     private String Gender;
     private String City;
     private String EmailID;
+    private String UserID;
+    private String Image;
+    private boolean exists;
 
-    public Users(){
-
+    public boolean isExists() {
+        return exists;
     }
 
-    public Users(String strUserName, String strPhoneNo, String strDOB, String strGender, String strCity, String strEmailID){
-
-        Username = strUserName;
-        PhoneNumber = strPhoneNo;
-        DateOfBirth = strDOB;
-        Gender = strGender;
-        City = strCity;
-        EmailID = strEmailID;
+    public void setExists(boolean exists) {
+        this.exists = exists;
     }
 
-    public Users(String strUserName, String strPhoneNo, String strEmailID){
+    public String getImage() {
+        return Image;
+    }
 
-        Username = strUserName;
-        PhoneNumber = strPhoneNo;
-        DateOfBirth = null;
-        Gender = null;
-        City = null;
-        EmailID = strEmailID;
+    public void setImage(String image) {
+        Image = image;
+    }
+
+    public String getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(String userID) {
+        UserID = userID;
+    }
+
+    public Users() {
+
+        Username = "";
+        Image = "";
+        PhoneNumber = "";
+        Gender = "";
+        EmailID = "";
+        City = "";
+        DateOfBirth = "";
+        UserID = "";
+        exists = false;
     }
 
     public String getUsername() {

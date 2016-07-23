@@ -2,6 +2,7 @@ package com.tech.petabyteboy.hisaab;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -86,13 +87,12 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
     //FireBase Database
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference userdataReference;
-    private DatabaseReference duesdataReference;
-    private FirebaseAuth auth;
-    private FirebaseUser user;
 
-    public Users usr = new Users();
-    public static String userName;
-    public static String userPhone;
+    public static Users User;
+    public static String UserID;
+    private String strUserImage;
+
+    private String TAG = "AddDuesActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,23 +101,18 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
 
         firebaseDatabase = FirebaseDatabase.getInstance();
 
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
+        SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME, MODE_PRIVATE);
+        Log.e(TAG, "Phone No : " + userPref.getString("phone", null));
+        UserID = userPref.getString("phone", null);
 
-        String uid = user.getUid();
-
-        userdataReference = firebaseDatabase.getReference().child("Users").child(uid);
-        duesdataReference = firebaseDatabase.getReference().child("Dues").child(uid);
+        userdataReference = firebaseDatabase.getReference().child("Users").child(UserID);
 
         userdataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                usr = dataSnapshot.getValue(Users.class);
-
-                userName = usr.getUsername();
-                userPhone = usr.getPhoneNumber();
-
+                User = dataSnapshot.getValue(Users.class);
+                strUserImage = User.getImage();
+                Log.e(TAG,"Image : "+strUserImage);
             }
 
             @Override
@@ -130,7 +125,7 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(toolbar_add_dues);
 
         passedFrom = getIntent().getStringExtra("from");
-        Log.e("Add Dues Activity", "Passed From : " + passedFrom);
+        Log.e(TAG, "Passed From : " + passedFrom);
 
         btn_cross = (ImageButton) findViewById(R.id.btn_cross);
         btn_cross.setOnClickListener(this);
@@ -145,6 +140,7 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
         editComment = (EditText) findViewById(R.id.editComment);
 
         imgUser = (SimpleDraweeView) findViewById(R.id.imguser);
+        imgUser.setImageURI(strUserImage);
 
         other_text = (TextView) findViewById(R.id.other_text);
         other_text.setText(R.string.add_others);
@@ -310,7 +306,7 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
         String strAmount = editAmount.getText().toString();
         String strComment = editComment.getText().toString();
 
-        Log.e("Add Due Activity", "Amount : " + strAmount + " Comment : " + strComment);
+        Log.e(TAG, "Amount : " + strAmount + " Comment : " + strComment);
 
         if (TextUtils.isEmpty(strAmount)) {
             Toast.makeText(getApplicationContext(), "Please fill all the required details to add Dues", Toast.LENGTH_SHORT).show();
@@ -339,7 +335,7 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
             GlobalVariables.splitContactImage.add(selected.get(i).image);
             GlobalVariables.selectedContactList.add(selected.get(i));
 
-            Log.e("Add Dues Activity", "Split Contact Name " + i + " : " + GlobalVariables.splitContactName.get(i) + "\n"
+            Log.e(TAG, "Split Contact Name " + i + " : " + GlobalVariables.splitContactName.get(i) + "\n"
                     + "Split Contact Number " + i + " : " + GlobalVariables.splitContactNumber.get(i) + "\n"
                     + "Split Contact Image " + i + " : " + GlobalVariables.splitContactImage.get(i) + "\n"
                     + "Selected Contact \n"
@@ -441,6 +437,29 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
             }
+            cursor.close();
+
+            if (phoneNo.contains(" ")) {
+                phoneNo = phoneNo.replace(" ", "");
+            }
+            if (phoneNo.contains("-")) {
+                phoneNo = phoneNo.replace("-", "");
+            }
+            if (phoneNo.length() >= 10) {
+                if (phoneNo.contains("-")) {
+                    phoneNo = phoneNo.substring(phoneNo.length() - 10, phoneNo.length());
+                    if (phoneNo.startsWith("0")) {
+                        phoneNo = phoneNo.substring(1);
+                    }
+                } else {
+                    phoneNo = phoneNo.substring(phoneNo.length() - 10, phoneNo.length());
+                    if (phoneNo.startsWith("0")) {
+                        phoneNo = phoneNo.substring(1);
+                    }
+                }
+            }
+
+            Log.e(TAG,"Phone No : "+phoneNo);
 
             Boolean isNumberAddedBefore = false;
 
@@ -452,7 +471,7 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
             model.setImage(image_thumb);
             model.setSeleted(true);
 
-            Log.e("Add Dues Activity", "Contact Name : " + model.getName() + "\n Contact Number : " + model.getNumber()
+            Log.e(TAG, "Contact Name : " + model.getName() + "\n Contact Number : " + model.getNumber()
                     + "\n Contact Image : " + model.getImage() + "\n Contact AddBtn : " + model.getAddBtn()
                     + "\n Contact Selected : " + model.isSeleted());
 

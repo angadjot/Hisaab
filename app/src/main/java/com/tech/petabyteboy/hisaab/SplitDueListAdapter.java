@@ -12,8 +12,10 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.common.internal.DoNotStrip;
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -99,7 +101,7 @@ public class SplitDueListAdapter extends BaseAdapter {
         holder.editAmount.setTag(i);
         holder.friendImage.setTag(i);
 
-        if (contactNumber.get(i).equalsIgnoreCase(AddDuesActivity.userPhone)) {
+        if (contactNumber.get(i).equalsIgnoreCase(AddDuesActivity.User.getPhoneNumber())) {
             strName = "You";
         } else {
             strName = DuesSharedWithModel.getName(contactNumber.get(i));
@@ -119,9 +121,9 @@ public class SplitDueListAdapter extends BaseAdapter {
         Log.e("SplitDuesList","Adapter strName : "+strName);
         holder.txtContactName.setText(strName);
 
-        Log.e("SplitDuesList","Adapter Dues Amount "+i+" : "+duesAmount.get(i));
+        Log.e("SplitDuesList","Adapter Dues Amount "+i+" : "+MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(i)))).toString());
         if (!duesAmount.get(i).equalsIgnoreCase("")) {
-            holder.editAmount.setText(String.valueOf(Double.parseDouble(duesAmount.get(i))));
+            holder.editAmount.setText(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(i)))).toString());
         }
 
         final int position = i;
@@ -136,7 +138,7 @@ public class SplitDueListAdapter extends BaseAdapter {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                if (!charSequence.toString().equalsIgnoreCase(duesAmount.get(position))
+                if (!charSequence.toString().equalsIgnoreCase(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(position)))))
                         && charSequence.toString().length() > 0 && !charSequence.toString().isEmpty()
                         && !charSequence.toString().equalsIgnoreCase(".")) {
                     Log.e("SplitDuesList","Adapter Inside onTextChanged : Position : "+position);

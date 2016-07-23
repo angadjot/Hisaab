@@ -50,7 +50,5 @@ dependencies {
     compile('com.digits.sdk.android:digits:1.11.1@aar') {
         transitive = true;
     }
-    compile 'com.squareup.okhttp:okhttp:2.7.3'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.7.3'
 }
 apply plugin: 'com.google.gms.google-services'

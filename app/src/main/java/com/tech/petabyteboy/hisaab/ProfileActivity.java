@@ -4,14 +4,15 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -43,8 +46,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference userdataReference;
-    private DatabaseReference duesdataReference;
-    private FirebaseStorage storage;
     private StorageReference storeRef;
 
     private FirebaseAuth auth;
@@ -71,18 +72,24 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public static String strGender;
     public static String strCity;
     public static String strEmailID;
+    public static String strImage;
+
+    private String UserPhone;
 
     private Uri outputFileUri;
     private Uri galleryUri;
-
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int REQUEST_IMAGE_GET = 2;
 
     private Toolbar toolbar;
 
     private Users usr;
 
-    private Boolean flag_valueChnaged = false;
+    private String TAG = "ProfileActivity";
+
+    private File mFileTemp;
+
+    public static final int REQUEST_CODE_GALLERY = 1;
+    public static final int REQUEST_CODE_TAKE_PICTURE = 2;
+    public static final String TEMP_PHOTO_FILE_NAME = "hisaab.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +98,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME,MODE_PRIVATE);
+        Log.e(TAG,"Phone No : "+userPref.getString("phone",null));
+        UserPhone = userPref.getString("phone",null);
 
         editName = (EditText) findViewById(R.id.editUsername);
         editPhoneNo = (EditText) findViewById(R.id.MobileNumber);
@@ -124,11 +135,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
-        String uid = user.getUid();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storeRef = storage.getReference("Profile Pics");
 
         firebaseDatabase = FirebaseDatabase.getInstance();
 
-        userdataReference = firebaseDatabase.getReference().child("Users").child(uid);
+        userdataReference = firebaseDatabase.getReference().child("Users").child(UserPhone);
 
         showUserDetail();
 
@@ -147,6 +159,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 strDOB = usr.getDateOfBirth();
                 strCity = usr.getCity();
                 strGender = usr.getGender();
+                strImage = usr.getImage();
 
                 setValues();
             }
@@ -170,12 +183,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         else
             editPhoneNo.setText(strPhoneNo);
 
-        if (strDOB.isEmpty())
+        if (strDOB.isEmpty() || strDOB.equalsIgnoreCase(""))
             txt_dob.setText("01/01/1990");
         else
             txt_dob.setText(strDOB);
 
-        if (strGender.isEmpty())
+        if (strGender.isEmpty() || strGender.equalsIgnoreCase(""))
             txt_gender.setText("Gender");
         else
             txt_gender.setText(strGender);
@@ -189,6 +202,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             editEmail.setText("emailid@domain.com");
         else
             editEmail.setText(strEmailID);
+
+        Log.e(TAG,"Image Str : "+strImage);
+
+        if (strImage.isEmpty() || strImage.equalsIgnoreCase("")){
+            Uri uri = new Uri.Builder().scheme("res") // "res"
+                    .path(String.valueOf(R.drawable.profile_pic_home)).build();
+            imgUserProfile.setImageURI(uri);
+        }
+        else {
+            imgUserProfile.setImageURI(strImage);
+        }
 
     }
 
@@ -279,10 +303,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void capturePhoto() {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        outputFileUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "imgProfile.jpg"));
+        if ("mounted".equals(Environment.getExternalStorageState())) {
+            mFileTemp = new File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME);
+        } else {
+            mFileTemp = new File(getFilesDir(), TEMP_PHOTO_FILE_NAME);
+        }
+        outputFileUri = Uri.fromFile(mFileTemp);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
         }
     }
 
@@ -291,7 +320,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, REQUEST_IMAGE_GET);
+            startActivityForResult(intent, REQUEST_CODE_GALLERY);
         }
     }
 
@@ -343,5 +372,35 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             userdataReference.child("city").setValue(txtCountry.getText().toString());
         if (!strEmailID.equalsIgnoreCase(editEmail.getText().toString()))
             userdataReference.child("emailID").setValue(editEmail.getText().toString());
+        Log.e(TAG,"strImage : "+strImage);
+        if (strImage != null && !strImage.equalsIgnoreCase("")) {
+            userdataReference.child("image").setValue(strImage);
+            storeRef.child(usr.getUserID()).child("Images").putFile(Uri.parse(strImage)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Uri uri = taskSnapshot.getDownloadUrl();
+                    Log.e(TAG, "Image URI : " + uri);
+                    usr.setImage(String.valueOf(uri));
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == -1) || (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == RESULT_OK)) {
+            imgUserProfile.setImageURI(outputFileUri);
+            strImage = String.valueOf(outputFileUri);
+            return;
+        }
+
+        if ((requestCode == REQUEST_CODE_GALLERY && resultCode == -1) || (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK)) {
+
+            galleryUri = data.getData();
+            imgUserProfile.setImageURI(galleryUri);
+            strImage = String.valueOf(galleryUri);
+            return;
+        }
     }
 }

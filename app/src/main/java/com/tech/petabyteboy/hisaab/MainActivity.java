@@ -3,6 +3,7 @@ package com.tech.petabyteboy.hisaab;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.PersistableBundle;
@@ -17,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +44,7 @@ import com.google.firebase.storage.StorageReference;
 import com.twitter.sdk.android.core.models.User;
 
 import java.io.File;
+import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener, View.OnClickListener {
 
@@ -66,15 +69,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DatabaseReference userdataReference;
     private DatabaseReference duesdataReference;
     private FirebaseAuth auth;
-    private FirebaseUser user;
 
-    private String Username;
-    private String EmailID;
-    private String phoneno;
+    private String UserID;
 
     public static TextView txtAmount;
 
-    Users usr;
+    private Users User;
+
+    private String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,24 +121,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         txtAmount = (TextView) findViewById(R.id.txtAmount);
 
+        SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME, MODE_PRIVATE);
+        Log.e(TAG, "Phone No : " + userPref.getString("phone", null));
+        UserID = userPref.getString("phone", null);
+
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
 
-        String uid = user.getUid();
-
-        userdataReference = firebaseDatabase.getReference().child("Users").child(uid);
-        duesdataReference = firebaseDatabase.getReference().child("Dues").child(uid);
+        userdataReference = firebaseDatabase.getReference().child("Users").child(UserID);
+        duesdataReference = firebaseDatabase.getReference().child("Dues").child(UserID);
 
         userdataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                usr = dataSnapshot.getValue(Users.class);
-
-                Username = usr.getUsername();
-                EmailID = usr.getEmailID();
-                phoneno = usr.getPhoneNumber();
+                User = dataSnapshot.getValue(Users.class);
                 setValues();
             }
 
@@ -147,22 +146,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    private void setValues(){
+    private void setValues() {
 
-        if (Username.isEmpty()) {
+        if (User.getUsername().isEmpty()) {
             navUsername.setText("Username");
             txtUserName.setText("Username");
-        }
-        else {
-            navUsername.setText(Username);
-            txtUserName.setText(Username);
+        } else {
+            navUsername.setText(User.getUsername());
+            txtUserName.setText(User.getUsername());
         }
 
-        if (EmailID.isEmpty()){
+        if (User.getEmailID().isEmpty()) {
             navEmailID.setText("username@domain.com");
+        } else {
+            navEmailID.setText(User.getEmailID());
         }
-        else {
-            navEmailID.setText(EmailID);
+        if (User.getImage().isEmpty() || User.getImage().equalsIgnoreCase("")) {
+            Uri uri = new Uri.Builder().scheme("res") // "res"
+                    .path(String.valueOf(R.drawable.profile_pic_home)).build();
+            imgProfile.setImageURI(uri);
+            navProfile.setImageURI(uri);
+        } else {
+            imgProfile.setImageURI(User.getImage());
+            navProfile.setImageURI(User.getImage());
         }
     }
 
@@ -180,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(this, "Invite Friends is clicked !", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.recent_activity:
-                startActivity(new Intent(this,RecentActivities.class));
+                startActivity(new Intent(this, RecentActivities.class));
                 break;
             case R.id.favorites:
                 Toast.makeText(this, "Favorite is clicked !", Toast.LENGTH_SHORT).show();
@@ -191,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.signout:
                 auth.signOut();
-                startActivity(new Intent(this,SplashScreenActivity.class));
+                startActivity(new Intent(this, SplashScreenActivity.class));
                 finish();
                 break;
         }
@@ -224,13 +230,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.search:
 
                 break;
 
             case R.id.history:
-                Intent intent = new Intent(this,RecentActivities.class);
+                Intent intent = new Intent(this, RecentActivities.class);
                 startActivity(intent);
                 break;
         }
@@ -258,18 +264,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.imgProfile:
             case R.id.txtUserName:
 
-                Intent intent = new Intent(this,ProfileActivity.class);
+                Intent intent = new Intent(this, ProfileActivity.class);
                 startActivity(intent);
                 break;
 
             case R.id.btn_edit_profile:
-                startActivity(new Intent(getApplication(),ProfileActivity.class));
+                startActivity(new Intent(getApplication(), ProfileActivity.class));
                 break;
         }
+    }
+
+    public static String ConvertDouble(Double value) {
+        String angleFormated = new DecimalFormat("#.00").format(value);
+        if (value < 1.0d && value > 0.0d) {
+            return "0.00";
+        }
+        if (angleFormated.contains("-") && angleFormated.length() == 4) {
+            return "00.00";
+        }
+        if (angleFormated.equalsIgnoreCase(".00")) {
+            return "0.00";
+        }
+        return angleFormated;
     }
 
 }
