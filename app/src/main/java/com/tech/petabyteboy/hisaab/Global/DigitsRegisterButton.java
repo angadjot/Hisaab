@@ -1,9 +1,10 @@
-package com.tech.petabyteboy.hisaab;
+package com.tech.petabyteboy.hisaab.Global;
 
 import android.content.Context;
 import android.util.AttributeSet;
 
 import com.digits.sdk.android.DigitsAuthButton;
+import com.tech.petabyteboy.hisaab.R;
 
 /**
  * Created by petabyteboy on 14/07/16.

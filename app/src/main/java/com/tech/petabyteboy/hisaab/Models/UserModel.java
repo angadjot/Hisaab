@@ -1,11 +1,9 @@
-package com.tech.petabyteboy.hisaab;
-
-import android.location.Geocoder;
+package com.tech.petabyteboy.hisaab.Models;
 
 /**
- * Created by petabyteboy on 14/07/16.
+ * Created by petabyteboy on 23/07/16.
  */
-public class Users {
+public class UserModel {
 
     private String Username;
     private String PhoneNumber;
@@ -15,33 +13,8 @@ public class Users {
     private String EmailID;
     private String UserID;
     private String Image;
-    private boolean exists;
 
-    public boolean isExists() {
-        return exists;
-    }
-
-    public void setExists(boolean exists) {
-        this.exists = exists;
-    }
-
-    public String getImage() {
-        return Image;
-    }
-
-    public void setImage(String image) {
-        Image = image;
-    }
-
-    public String getUserID() {
-        return UserID;
-    }
-
-    public void setUserID(String userID) {
-        UserID = userID;
-    }
-
-    public Users() {
+    public UserModel() {
 
         Username = "";
         Image = "";
@@ -51,7 +24,6 @@ public class Users {
         City = "";
         DateOfBirth = "";
         UserID = "";
-        exists = false;
     }
 
     public String getUsername() {
@@ -102,4 +74,19 @@ public class Users {
         EmailID = emailID;
     }
 
+    public String getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(String userID) {
+        UserID = userID;
+    }
+
+    public String getImage() {
+        return Image;
+    }
+
+    public void setImage(String image) {
+        Image = image;
+    }
 }

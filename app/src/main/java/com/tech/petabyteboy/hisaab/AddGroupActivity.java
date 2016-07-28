@@ -3,6 +3,7 @@ package com.tech.petabyteboy.hisaab;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -12,6 +13,7 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -32,6 +34,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tech.petabyteboy.hisaab.Adapters.DuesSharedWithListAdapter;
+import com.tech.petabyteboy.hisaab.Global.GlobalVariables;
+import com.tech.petabyteboy.hisaab.Models.DuesSharedWithModel;
+import com.tech.petabyteboy.hisaab.Models.UserModel;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,19 +48,17 @@ import java.util.Collections;
 
 public class AddGroupActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ImageButton btnCross;
-    private Button btnDone;
+    private Toolbar toolbar_add_group;
+
     private EditText editComment;
     private EditText editGroupName;
-
-    private File mFileTemp;
 
     private String strGroupComment;
     private String strGroupId;
     private String strGroupImage;
     private String strGroupName;
 
-    private String MembersID;
+    private File mFileTemp;
 
     private GridView gridSelectedContatcts;
 
@@ -69,44 +73,35 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
 
     // Custom BaseAdapter for GridView (Contacts)
     private DuesSharedWithListAdapter adapter;
-
     private AdapterView.OnItemClickListener mItemMultiClickListener;
 
-    //FireBase Database
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference userdataReference;
-    private DatabaseReference groupsdataReference;
-    private FirebaseAuth auth;
-    private FirebaseUser user;
+    private static UserModel User;
+    private static String UserID;
+    private String strUserImage;
 
-    public Users usr = new Users();
-    public static String userName;
-    public static String userPhone;
+    private String TAG = "AddGroupActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
+        SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME, MODE_PRIVATE);
+        Log.e(TAG, "Phone No : " + userPref.getString("phone", null));
+        UserID = userPref.getString("phone", null);
 
-        String uid = user.getUid();
+        DatabaseReference groupsdataRef = firebaseDatabase.getReference().child("Groups").child(UserID);
 
-        userdataReference = firebaseDatabase.getReference().child("Users").child(uid);
-        groupsdataReference = firebaseDatabase.getReference().child("Groups").child(uid);
+        DatabaseReference userdataReference = firebaseDatabase.getReference().child("Users").child(UserID);
 
         userdataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                usr = dataSnapshot.getValue(Users.class);
-
-                userName = usr.getUsername();
-                userPhone = usr.getPhoneNumber();
-
+                User = dataSnapshot.getValue(UserModel.class);
+                strUserImage = User.getImage();
+                Log.e(TAG, "Image : " + strUserImage);
             }
 
             @Override
@@ -115,17 +110,20 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+        toolbar_add_group = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar_add_group);
+
+        Button btnDone = (Button) findViewById(R.id.btn_done);
+        btnDone.setOnClickListener(this);
+
+        ImageButton btnCross = (ImageButton) findViewById(R.id.btn_cross);
+        btnCross.setOnClickListener(this);
+
         editGroupName = (EditText) findViewById(R.id.edit_group_name);
         editComment = (EditText) findViewById(R.id.input_comment);
 
         imageGroup = (SimpleDraweeView) findViewById(R.id.imageGroup);
         imageGroup.setOnClickListener(this);
-
-        btnDone = (Button) findViewById(R.id.btn_done);
-        btnDone.setOnClickListener(this);
-
-        btnCross = (ImageButton) findViewById(R.id.btn_cross);
-        btnCross.setOnClickListener(this);
 
         mItemMultiClickListener = new AdapterView.OnItemClickListener() {
             @Override
@@ -153,7 +151,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
                 if (editGroupName.getText().toString().length() > 0) {
-                    editGroupName.setTypeface(editGroupName.getTypeface(), REQUEST_CODE_GALLERY);
+                    editGroupName.setTypeface(editGroupName.getTypeface(), 1);
                 } else {
                     editGroupName.setTypeface(editGroupName.getTypeface(), 0);
                 }
@@ -224,7 +222,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
                 break;
 
             case R.id.btn_done:
-                AddGroup();
+                AddGroupIntent();
                 break;
 
             case R.id.imageGroup:
@@ -299,9 +297,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
 
         Uri imageUri = Uri.parse(getDefaultImagePath());
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-
             imageGroup.setImageURI(imageUri);
-
         }
 
         if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK) {
@@ -330,6 +326,29 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
                     }
                 }
             }
+            cursor.close();
+
+            if (phoneNo.contains(" ")) {
+                phoneNo = phoneNo.replace(" ", "");
+            }
+            if (phoneNo.contains("-")) {
+                phoneNo = phoneNo.replace("-", "");
+            }
+            if (phoneNo.length() >= 10) {
+                if (phoneNo.contains("-")) {
+                    phoneNo = phoneNo.substring(phoneNo.length() - 10, phoneNo.length());
+                    if (phoneNo.startsWith("0")) {
+                        phoneNo = phoneNo.substring(1);
+                    }
+                } else {
+                    phoneNo = phoneNo.substring(phoneNo.length() - 10, phoneNo.length());
+                    if (phoneNo.startsWith("0")) {
+                        phoneNo = phoneNo.substring(1);
+                    }
+                }
+            }
+
+            Log.e(TAG, "Phone No : " + phoneNo);
 
             Boolean isNumberAddedBefore = false;
 
@@ -341,14 +360,16 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
             model.setImage(image_thumb);
             model.setSeleted(true);
 
+            Log.e(TAG, "Contact Name : " + model.getName() + "\n Contact Number : " + model.getNumber()
+                    + "\n Contact Image : " + model.getImage() + "\n Contact AddBtn : " + model.getAddBtn()
+                    + "\n Contact Selected : " + model.isSeleted());
+
             for (int i = 0; i < GlobalVariables.data.size(); i++) {
                 DuesSharedWithModel newModel = GlobalVariables.data.get(i);
                 if (newModel.number != null && model.number.equalsIgnoreCase(newModel.number)) {
                     Toast.makeText(this, "Contact Already Added!!", Toast.LENGTH_SHORT).show();
                     isNumberAddedBefore = true;
                     break;
-                } else {
-                    continue;
                 }
             }
 
@@ -381,7 +402,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
         return "";
     }
 
-    public void AddGroup() {
+    public void AddGroupIntent() {
 
         String title;
         strGroupName = editGroupName.getText().toString();
@@ -405,7 +426,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
 
             StringBuilder sb = new StringBuilder();
 
-            sb.append(userPhone);
+            sb.append(UserID);
 
             ArrayList<DuesSharedWithModel> selected = adapter.getSelected();
 
@@ -431,7 +452,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
 
             String strNumber = String.valueOf(sb);
 
-            MembersID = strNumber;
+            UserID = strNumber;
 
             Log.e("Number String ", strNumber);
 

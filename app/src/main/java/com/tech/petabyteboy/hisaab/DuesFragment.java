@@ -1,7 +1,9 @@
 package com.tech.petabyteboy.hisaab;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -15,7 +17,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.tech.petabyteboy.hisaab.Adapters.DuesViewAdapter;
+import com.tech.petabyteboy.hisaab.Models.DuesDataObject;
+import com.tech.petabyteboy.hisaab.Models.UserDuesModel;
+
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class DuesFragment extends Fragment implements View.OnClickListener {
 
@@ -32,12 +44,23 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
 
     private TextView txtMessage;
 
-    //private ArrayList<HomeModel> AllListDues;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference duesDatabaseRef;
+
+    private String TAG = "DuesFragment";
+    private String UserID;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_dues,null);
+        View view = inflater.inflate(R.layout.fragment_dues, null);
+
+        SharedPreferences UserDetail = this.getActivity().getSharedPreferences(RegisterActivity.PREF_NAME, Context.MODE_PRIVATE);
+        Log.e(TAG, "Phone No : " + UserDetail.getString("phone", null));
+        UserID = UserDetail.getString("phone", null);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        duesDatabaseRef = firebaseDatabase.getReference().child("Dues");
 
         txtMessage = (TextView) view.findViewById(R.id.txtDuesMsg);
 
@@ -51,8 +74,6 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
         mAdapter = new DuesViewAdapter(getDataSet());
         mRecyclerView.setAdapter(mAdapter);
 
-        getDuesList();
-
         return view;
     }
 
@@ -62,53 +83,19 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
         ((DuesViewAdapter) mAdapter).setOnItemClickListener(new DuesViewAdapter.MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                Toast.makeText(getContext(),"Clicked on Item "+position,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Clicked on Item " + position, Toast.LENGTH_SHORT).show();
                 Log.i(LOG_TAG, " Clicked on Item " + position);
-                startActivity(new Intent(getContext(),FriendProfileActivity.class));
+                startActivity(new Intent(getContext(), FriendProfileActivity.class));
             }
         });
     }
 
     @Override
     public void onClick(View view) {
-        Intent intent = new Intent(getContext(),AddDuesActivity.class);
+        Intent intent = new Intent(getContext(), AddDuesActivity.class);
         intent.putExtra("from", "home");
         startActivity(intent);
 
-    }
-
-    public void getDuesList() {
-
-        /*try {
-            AllListDues = new ArrayList<>();
-            RealmResults<HomeModel> query = this.realm.where(HomeModel.class).findAll();
-            intIGet = 0.0f;
-            intIPay = 0.0f;
-            Iterator i$ = query.iterator();
-            while (i$.hasNext()) {
-                HomeModel p = (HomeModel) i$.next();
-                this.AllListExpense.add(p);
-                if (p.getPay_type().equalsIgnoreCase("iGET")) {
-                    this.intIGet = Float.valueOf(p.getAmount()).floatValue() + this.intIGet;
-                } else if (p.getPay_type().equalsIgnoreCase("iPAY")) {
-                    this.intIPay = Float.valueOf(p.getAmount()).floatValue() + this.intIPay;
-                }
-            }
-        } catch (Exception e) {
-            AppDelegate.LogE(e);
-        }
-        System.out.println("AllData" + this.AllListExpense);
-        if (this.AllListExpense.size() > 0) {
-            HomeListAdapter_NEw adapter = new HomeListAdapter_NEw(getActivity(), this.AllListExpense);
-            this.listHome.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-            this.listHome.setVisibility(0);
-            setCalculateValue();
-            return;
-        }
-        this.txtMessage.setVisibility(0);
-        this.txtMessage.setText("No Dues Yet!!");
-        */
     }
 
     public void setCalculateValue() {
@@ -134,4 +121,5 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
         }
         return results;
     }
+
 }

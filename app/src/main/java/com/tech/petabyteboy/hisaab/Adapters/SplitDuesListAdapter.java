@@ -1,4 +1,4 @@
-package com.tech.petabyteboy.hisaab;
+package com.tech.petabyteboy.hisaab.Adapters;
 
 import android.content.Context;
 import android.net.Uri;
@@ -12,17 +12,20 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.facebook.common.internal.DoNotStrip;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.tech.petabyteboy.hisaab.AddDuesActivity;
+import com.tech.petabyteboy.hisaab.Interfaces.DataTransferInterface;
+import com.tech.petabyteboy.hisaab.MainActivity;
+import com.tech.petabyteboy.hisaab.Models.DuesSharedWithModel;
+import com.tech.petabyteboy.hisaab.R;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by petabyteboy on 19/07/16.
+ * Created by petabyteboy on 23/07/16.
  */
-public class SplitDueListAdapter extends BaseAdapter {
+public class SplitDuesListAdapter extends BaseAdapter {
 
     ArrayList<String> contactName;
     ArrayList<String> contactNumber;
@@ -40,7 +43,7 @@ public class SplitDueListAdapter extends BaseAdapter {
         TextView rupeesymbol;
     }
 
-    public SplitDueListAdapter(Context context, ArrayList<String> contactName, ArrayList<String> contactNumber, ArrayList<String> imageAdd, ArrayList<String> duesAmount, Boolean is_toggle, DataTransferInterface dtInterface) {
+    public SplitDuesListAdapter(Context context, ArrayList<String> contactName, ArrayList<String> contactNumber, ArrayList<String> imageAdd, ArrayList<String> duesAmount, Boolean is_toggle, DataTransferInterface dtInterface) {
 
         hashMap = new HashMap<>();
         this.context = context;
@@ -121,7 +124,7 @@ public class SplitDueListAdapter extends BaseAdapter {
         Log.e("SplitDuesList","Adapter strName : "+strName);
         holder.txtContactName.setText(strName);
 
-        Log.e("SplitDuesList","Adapter Dues Amount "+i+" : "+MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(i)))).toString());
+        Log.e("SplitDuesList","Adapter Dues Amount "+i+" : "+ MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(i)))).toString());
         if (!duesAmount.get(i).equalsIgnoreCase("")) {
             holder.editAmount.setText(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(i)))).toString());
         }

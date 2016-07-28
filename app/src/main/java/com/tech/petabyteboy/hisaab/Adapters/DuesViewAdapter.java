@@ -1,4 +1,4 @@
-package com.tech.petabyteboy.hisaab;
+package com.tech.petabyteboy.hisaab.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.tech.petabyteboy.hisaab.Models.DuesDataObject;
+import com.tech.petabyteboy.hisaab.R;
 
 import java.util.ArrayList;
 

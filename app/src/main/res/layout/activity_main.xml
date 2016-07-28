@@ -49,16 +49,6 @@
                     fresco:placeholderImageScaleType="fitCenter"
                     fresco:roundAsCircle="true"/>
 
-                <Button
-                    android:id="@+id/imgBtnProfile"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:textColor="#ffffff"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
-
                 <TextView
                     android:id="@+id/txtUserName"
                     android:layout_width="wrap_content"

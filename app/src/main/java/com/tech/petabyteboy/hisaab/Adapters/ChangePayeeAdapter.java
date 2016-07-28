@@ -1,41 +1,40 @@
-package com.tech.petabyteboy.hisaab;
+package com.tech.petabyteboy.hisaab.Adapters;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-
-import org.json.JSONArray;
+import com.tech.petabyteboy.hisaab.AddDuesActivity;
+import com.tech.petabyteboy.hisaab.Models.DuesSharedWithModel;
+import com.tech.petabyteboy.hisaab.R;
 
 import java.util.ArrayList;
 
 /**
- * Created by petabyteboy on 19/07/16.
+ * Created by petabyteboy on 23/07/16.
  */
-public class PayeeAdapter extends BaseAdapter {
+public class ChangePayeeAdapter extends BaseAdapter {
 
     Context context;
     ArrayList<String> duesImage;
     ArrayList<String> duesName;
     ArrayList<String> duesNumber;
 
-    private String TAG = "PayeeAdapter";
+    private String TAG = "ChangePayeeAdapter";
 
     public class Holder {
         ImageView friendImage;
         TextView txtContactName;
     }
 
-    public PayeeAdapter(Context context, ArrayList<String> Name, ArrayList<String> Number, ArrayList<String> Image) {
+    public ChangePayeeAdapter(Context context, ArrayList<String> Name, ArrayList<String> Number, ArrayList<String> Image) {
         duesName = new ArrayList<>();
         duesNumber = new ArrayList<>();
         duesImage = new ArrayList<>();

@@ -81,4 +81,6 @@
     <string name="symbol_rupee">₹</string>
     <string name="change_payer">(Change Payer)</string>
     <string name="split_even">Split Even</string>
+    <string name="phone">Phone Number</string>
+    <string name="email">username@domain.com"</string>
 </resources>

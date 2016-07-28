@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.tech.petabyteboy.hisaab.Models.UserModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -57,13 +58,12 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
     public static String strImage;
 
     private FirebaseAuth mAuth;
-    private FirebaseDatabase firebaseDatabase;
     private DatabaseReference userDataRef;
     private StorageReference storeRef;
 
     private FirebaseUser User;
 
-    private Users user;
+    private UserModel user;
 
     private static final String TAG = "RegisterProfileActivity";
 
@@ -81,11 +81,10 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
 
         Log.e(TAG, "\nstrPhoneNo : " + strPhoneNo + "\nstrUserName : " + strUserName + "\nstrPassWord : " + strPassword + "\nstrImage : " + strImage);
 
-        user = new Users();
+        user = new UserModel();
         user.setUsername(strUserName);
         user.setPhoneNumber(strPhoneNo);
         user.setUserID(strPhoneNo);
-        user.setExists(true);
         if (!strImage.equalsIgnoreCase("") || !strImage.isEmpty()) {
             user.setImage(strImage);
         }
@@ -113,7 +112,7 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
         SelectDate();
 
         mAuth = FirebaseAuth.getInstance();
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
         userDataRef = firebaseDatabase.getReference();
 

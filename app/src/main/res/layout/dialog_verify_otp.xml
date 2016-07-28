@@ -41,7 +41,7 @@
         android:background="#ffffff"
         android:orientation="vertical">
 
-        <com.tech.petabyteboy.hisaab.DigitsRegisterButton
+        <com.tech.petabyteboy.hisaab.Global.DigitsRegisterButton
             android:id="@+id/auth_button"
             android:layout_width="match_parent"
             android:layout_height="30dp"

@@ -4,12 +4,13 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 
-import com.digits.sdk.android.AuthCallback;
 import com.digits.sdk.android.Digits;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 
@@ -21,7 +22,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     private static final String TWITTER_KEY = "cFfpG48pfvAvqtthhmEy4pJyn";
     private static final String TWITTER_SECRET = "lfX5NipheTcOJUJS4fIzNMQ0apAOukM39g7unTfXjR8S2rkgpm";
 
-    private FirebaseAuth mAuth;
     private FirebaseUser user;
 
     @Override
@@ -31,7 +31,10 @@ public class SplashScreenActivity extends AppCompatActivity {
         Fabric.with(this, new TwitterCore(authConfig), new Digits());
         Fresco.initialize(this);
         setContentView(R.layout.activity_splash_screen);
-        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {

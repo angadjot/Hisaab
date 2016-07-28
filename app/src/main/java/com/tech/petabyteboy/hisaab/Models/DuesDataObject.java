@@ -1,4 +1,4 @@
-package com.tech.petabyteboy.hisaab;
+package com.tech.petabyteboy.hisaab.Models;
 
 /**
  * Created by petabyteboy on 15/07/16.
@@ -8,7 +8,7 @@ public class DuesDataObject {
     private String mText1;
     private String mText2;
 
-    DuesDataObject(String text1, String text2) {
+    public DuesDataObject(String text1, String text2) {
         mText1 = text1;
         mText2 = text2;
     }

@@ -36,18 +36,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public static String strPhoneNo;
     public static String strUserName;
 
-    private Button btnRegister;
-
     private EditText editName;
     private EditText editPhoneNo;
     private SimpleDraweeView imgUserProfile;
 
-    private File mFileTemp;
-
     private String TAG = "RegisterActivity";
 
     public static final String username_key = "UserName";
-    public static final String phonenumber_key = "PhoneNumber";
     public static final String imgProfile_key = "ProfilePic";
     public static final String userID_key = "UserID";
 
@@ -68,8 +63,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         imgUserProfile = (SimpleDraweeView) findViewById(R.id.imgUserProfile);
         editPhoneNo = (EditText) findViewById(R.id.editPhone);
         editName = (EditText) findViewById(R.id.editName);
-        btnRegister = (Button) findViewById(R.id.btn_register);
+
+        Button btnRegister = (Button) findViewById(R.id.btn_register);
         btnRegister.setOnClickListener(this);
+
         imgUserProfile.setOnClickListener(this);
 
     }
@@ -150,6 +147,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private void capturePhoto() {
 
+        File mFileTemp;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if ("mounted".equals(Environment.getExternalStorageState())) {
             mFileTemp = new File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME);
@@ -176,18 +174,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if ((requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == -1) || (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == RESULT_OK)) {
-
+        if (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == RESULT_OK) {
             imgUserProfile.setImageURI(outputFileUri);
-            return;
         }
 
-        if ((requestCode == REQUEST_CODE_GALLERY && resultCode == -1) || (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK)) {
-
+        if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK) {
             galleryUri = data.getData();
-
             imgUserProfile.setImageURI(galleryUri);
-            return;
         }
 
     }

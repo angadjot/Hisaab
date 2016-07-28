@@ -1,4 +1,6 @@
-package com.tech.petabyteboy.hisaab;
+package com.tech.petabyteboy.hisaab.Global;
+
+import com.tech.petabyteboy.hisaab.Models.DuesSharedWithModel;
 
 import java.util.ArrayList;
 

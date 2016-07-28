@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,8 +23,6 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.tech.petabyteboy.hisaab.Models.UserModel;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -44,13 +42,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private DatePickerDialog DatePicker;
 
-    private FirebaseDatabase firebaseDatabase;
     private DatabaseReference userdataReference;
     private StorageReference storeRef;
-
-    private FirebaseAuth auth;
-    private FirebaseUser user;
-
 
     private EditText editName;
     private EditText editPhoneNo;
@@ -59,10 +52,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private AutoCompleteTextView txtCountry;
     private TextView txt_dob;
     private TextView txt_gender;
-
-    private ImageButton btn_back;
-    private Button btndone;
-    private ImageView btnEdit;
 
     private SimpleDateFormat dateFormatter;
 
@@ -74,19 +63,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public static String strEmailID;
     public static String strImage;
 
-    private String UserPhone;
-
     private Uri outputFileUri;
-    private Uri galleryUri;
 
-    private Toolbar toolbar;
-
-    private Users usr;
+    private UserModel User;
 
     private String TAG = "ProfileActivity";
-
-    private File mFileTemp;
-
     public static final int REQUEST_CODE_GALLERY = 1;
     public static final int REQUEST_CODE_TAKE_PICTURE = 2;
     public static final String TEMP_PHOTO_FILE_NAME = "hisaab.jpg";
@@ -96,12 +77,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME,MODE_PRIVATE);
-        Log.e(TAG,"Phone No : "+userPref.getString("phone",null));
-        UserPhone = userPref.getString("phone",null);
+        SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME, MODE_PRIVATE);
+        Log.e(TAG, "Phone No : " + userPref.getString("phone", null));
+        String UserPhone = userPref.getString("phone", null);
 
         editName = (EditText) findViewById(R.id.editUsername);
         editPhoneNo = (EditText) findViewById(R.id.MobileNumber);
@@ -116,13 +97,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         editEmail = (EditText) findViewById(R.id.EmailID);
 
-        btn_back = (ImageButton) findViewById(R.id.btn_back);
+        ImageButton btn_back = (ImageButton) findViewById(R.id.btn_back);
         btn_back.setOnClickListener(this);
 
-        btnEdit = (ImageView) findViewById(R.id.btn_edit);
+        ImageView btnEdit = (ImageView) findViewById(R.id.btn_edit);
         btnEdit.setOnClickListener(this);
 
-        btndone = (Button) findViewById(R.id.btn_done);
+        Button btndone = (Button) findViewById(R.id.btn_done);
         btndone.setOnClickListener(this);
 
         imgUserProfile = (SimpleDraweeView) findViewById(R.id.imgUserProfile);
@@ -132,15 +113,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         SelectDate();
 
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
-
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storeRef = storage.getReference("Profile Pics");
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
-        userdataReference = firebaseDatabase.getReference().child("Users").child(UserPhone);
+        if (UserPhone != null)
+            userdataReference = firebaseDatabase.getReference().child("Users").child(UserPhone);
 
         showUserDetail();
 
@@ -151,15 +130,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         userdataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                usr = dataSnapshot.getValue(Users.class);
+                User = dataSnapshot.getValue(UserModel.class);
 
-                strUserName = usr.getUsername();
-                strEmailID = usr.getEmailID();
-                strPhoneNo = usr.getPhoneNumber();
-                strDOB = usr.getDateOfBirth();
-                strCity = usr.getCity();
-                strGender = usr.getGender();
-                strImage = usr.getImage();
+                strUserName = User.getUsername();
+                strEmailID = User.getEmailID();
+                strPhoneNo = User.getPhoneNumber();
+                strDOB = User.getDateOfBirth();
+                strCity = User.getCity();
+                strGender = User.getGender();
+                strImage = User.getImage();
 
                 setValues();
             }
@@ -174,22 +153,22 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void setValues() {
 
         if (strUserName.isEmpty())
-            editName.setText("Username");
+            editName.setText(R.string.username);
         else
             editName.setText(strUserName);
 
         if (strPhoneNo.isEmpty())
-            editPhoneNo.setText("Phone Number");
+            editPhoneNo.setText(R.string.phone);
         else
             editPhoneNo.setText(strPhoneNo);
 
         if (strDOB.isEmpty() || strDOB.equalsIgnoreCase(""))
-            txt_dob.setText("01/01/1990");
+            txt_dob.setText(R.string.date_hint);
         else
             txt_dob.setText(strDOB);
 
         if (strGender.isEmpty() || strGender.equalsIgnoreCase(""))
-            txt_gender.setText("Gender");
+            txt_gender.setText(R.string.gender_hint);
         else
             txt_gender.setText(strGender);
 
@@ -203,14 +182,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         else
             editEmail.setText(strEmailID);
 
-        Log.e(TAG,"Image Str : "+strImage);
+        Log.e(TAG, "Image Str : " + strImage);
 
-        if (strImage.isEmpty() || strImage.equalsIgnoreCase("")){
+        if (strImage.isEmpty() || strImage.equalsIgnoreCase("")) {
             Uri uri = new Uri.Builder().scheme("res") // "res"
                     .path(String.valueOf(R.drawable.profile_pic_home)).build();
             imgUserProfile.setImageURI(uri);
-        }
-        else {
+        } else {
             imgUserProfile.setImageURI(strImage);
         }
 
@@ -226,7 +204,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onDateSet(android.widget.DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                String str_showDate = dateFormatter.format(newDate.getTime()).toString();
+                String str_showDate = dateFormatter.format(newDate.getTime());
                 txt_dob.setText(str_showDate);
             }
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -242,31 +220,31 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         dialog.setContentView(R.layout.dialog_select_gender);
         dialog.show();
-        ((Button) dialog.findViewById(R.id.btnCross)).setOnClickListener(new View.OnClickListener() {
+        (dialog.findViewById(R.id.btnCross)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
             }
         });
-        ((Button) dialog.findViewById(R.id.btnMale)).setOnClickListener(new View.OnClickListener() {
+        (dialog.findViewById(R.id.btnMale)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                txt_gender.setText("Male");
+                txt_gender.setText(R.string.dialog_male);
             }
         });
-        ((Button) dialog.findViewById(R.id.btnFemale)).setOnClickListener(new View.OnClickListener() {
+        (dialog.findViewById(R.id.btnFemale)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                txt_gender.setText("Female");
+                txt_gender.setText(R.string.dialog_female);
             }
         });
-        ((Button) dialog.findViewById(R.id.btnDialogOther)).setOnClickListener(new View.OnClickListener() {
+        (dialog.findViewById(R.id.btnDialogOther)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                txt_gender.setText("Other");
+                txt_gender.setText(R.string.dialog_other);
             }
         });
     }
@@ -302,6 +280,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void capturePhoto() {
 
+        File mFileTemp;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if ("mounted".equals(Environment.getExternalStorageState())) {
             mFileTemp = new File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME);
@@ -358,7 +337,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private void updateDatabase(){
+    private void updateDatabase() {
 
         if (!strUserName.equalsIgnoreCase(editName.getText().toString()))
             userdataReference.child("username").setValue(editName.getText().toString());
@@ -372,15 +351,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             userdataReference.child("city").setValue(txtCountry.getText().toString());
         if (!strEmailID.equalsIgnoreCase(editEmail.getText().toString()))
             userdataReference.child("emailID").setValue(editEmail.getText().toString());
-        Log.e(TAG,"strImage : "+strImage);
+        Log.e(TAG, "strImage : " + strImage);
         if (strImage != null && !strImage.equalsIgnoreCase("")) {
             userdataReference.child("image").setValue(strImage);
-            storeRef.child(usr.getUserID()).child("Images").putFile(Uri.parse(strImage)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            storeRef.child(User.getUserID()).child("Images").putFile(Uri.parse(strImage)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri uri = taskSnapshot.getDownloadUrl();
                     Log.e(TAG, "Image URI : " + uri);
-                    usr.setImage(String.valueOf(uri));
+                    User.setImage(String.valueOf(uri));
                 }
             });
         }
@@ -397,7 +376,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         if ((requestCode == REQUEST_CODE_GALLERY && resultCode == -1) || (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK)) {
 
-            galleryUri = data.getData();
+            Uri galleryUri = data.getData();
             imgUserProfile.setImageURI(galleryUri);
             strImage = String.valueOf(galleryUri);
             return;

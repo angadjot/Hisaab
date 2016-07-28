@@ -23,13 +23,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tech.petabyteboy.hisaab.Adapters.DuesSharedWithListAdapter;
+import com.tech.petabyteboy.hisaab.Global.GlobalVariables;
+import com.tech.petabyteboy.hisaab.Models.DuesSharedWithModel;
+import com.tech.petabyteboy.hisaab.Models.UserModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,11 +86,7 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
     private DuesSharedWithListAdapter adapter;
     private AdapterView.OnItemClickListener mItemMultiClickListener;
 
-    //FireBase Database
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference userdataReference;
-
-    public static Users User;
+    public static UserModel User;
     public static String UserID;
     private String strUserImage;
 
@@ -99,20 +97,20 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_dues);
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
         SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME, MODE_PRIVATE);
         Log.e(TAG, "Phone No : " + userPref.getString("phone", null));
         UserID = userPref.getString("phone", null);
 
-        userdataReference = firebaseDatabase.getReference().child("Users").child(UserID);
+        DatabaseReference userdataReference = firebaseDatabase.getReference().child("Users").child(UserID);
 
         userdataReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User = dataSnapshot.getValue(Users.class);
+                User = dataSnapshot.getValue(UserModel.class);
                 strUserImage = User.getImage();
-                Log.e(TAG,"Image : "+strUserImage);
+                Log.e(TAG, "Image : " + strUserImage);
             }
 
             @Override
@@ -459,7 +457,7 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
 
-            Log.e(TAG,"Phone No : "+phoneNo);
+            Log.e(TAG, "Phone No : " + phoneNo);
 
             Boolean isNumberAddedBefore = false;
 
@@ -481,8 +479,6 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(this, "Contact Already Added!!", Toast.LENGTH_SHORT).show();
                     isNumberAddedBefore = true;
                     break;
-                } else {
-                    continue;
                 }
             }
 

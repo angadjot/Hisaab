@@ -1,4 +1,4 @@
-package com.tech.petabyteboy.hisaab;
+package com.tech.petabyteboy.hisaab.Adapters;
 
 import android.content.Context;
 import android.net.Uri;
@@ -13,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.tech.petabyteboy.hisaab.Global.GlobalVariables;
+import com.tech.petabyteboy.hisaab.Models.DuesSharedWithModel;
+import com.tech.petabyteboy.hisaab.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
