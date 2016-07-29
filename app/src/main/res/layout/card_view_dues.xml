@@ -22,7 +22,7 @@
             android:layout_height="match_parent">
 
             <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/image_profile"
+                android:id="@+id/dues_image"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_alignParentLeft="true"
@@ -36,13 +36,13 @@
                 fresco:roundAsCircle="true" />
 
             <TextView
-                android:id="@+id/profile_name"
+                android:id="@+id/due_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="2dp"
-                android:layout_toEndOf="@+id/image_profile"
-                android:layout_toRightOf="@+id/image_profile"
+                android:layout_toEndOf="@+id/dues_image"
+                android:layout_toRightOf="@+id/dues_image"
                 android:text="@string/add_category"
                 android:textColor="@color/darkgray"
                 android:textSize="14sp" />

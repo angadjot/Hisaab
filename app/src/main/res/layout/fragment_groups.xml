@@ -20,7 +20,8 @@
             android:gravity="center"
             android:text="@string/no_groups"
             android:textColor="@color/davy_grey"
-            android:textSize="18sp" />
+            android:textSize="30sp"
+            android:visibility="gone"/>
 
         <ListView
             android:id="@+id/listGroup"

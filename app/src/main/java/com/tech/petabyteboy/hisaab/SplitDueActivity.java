@@ -118,8 +118,8 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
     private String TAG = "SplitDueActivity";
 
-    private Boolean[] flag_exists;
-    private Boolean[] flag_exist;
+    private Boolean[] flag_User_exists;
+    private Boolean[] flag_HomeDue_exists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +158,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         btnDone.setOnClickListener(this);
 
         txtTotalAmount = (TextView) findViewById(R.id.txtTotalAmountSplit);
-        txtTotalAmount.setText(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount.replace(",", "")))));
+        txtTotalAmount.setText(GlobalVariables.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount.replace(",", "")))));
 
         imgProfile = (SimpleDraweeView) findViewById(R.id.imgProfileSplit);
 
@@ -166,8 +166,8 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         other_layout = (RelativeLayout) findViewById(R.id.other_layout);
 
         editAmount = (EditText) findViewById(R.id.editamountSplit);
-        editAmount.setText(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount.replace(",", "")))));
-        edittexttotalamount = String.valueOf(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount.replace(",", "")))));
+        editAmount.setText(GlobalVariables.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount.replace(",", "")))));
+        edittexttotalamount = String.valueOf(GlobalVariables.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount.replace(",", "")))));
         editAmount.setVisibility(View.VISIBLE);
 
         editAmount.addTextChangedListener(new TextWatcher() {
@@ -193,7 +193,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
                     strAmount = editAmount.getText().toString();
                     setSplitAdapter(is_toggle);
-                    txtTotalAmount.setText(MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount))));
+                    txtTotalAmount.setText(GlobalVariables.ConvertDouble(Double.valueOf(Double.parseDouble(strAmount))));
                     edittexttotalamount = charSequence.toString();
 
                     Log.e("SplitDueActivity", "onTextChange"
@@ -280,7 +280,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         strName = strUserName;
         strImage = strUserImage;
 
-        txtUserName.setText("You paid");
+        txtUserName.setText(R.string.created_by);
         payeeType = "iGET";
 
         if (strImage.equalsIgnoreCase("")) {
@@ -470,8 +470,8 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                 //Log.e("SplitDueActivity", "Total Amount : " + formatDecimal(txtTotalAmount.getText().toString()));
                 if (!value.equalsIgnoreCase(txtTotalAmount.getText().toString())) {
                     Toast.makeText(this, "Amount Splitted doesn't match with the Total Amount", Toast.LENGTH_SHORT).show();
-                } else if (MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(value))).equalsIgnoreCase("0.00")
-                        || MainActivity.ConvertDouble(Double.valueOf(Double.parseDouble(value))).equalsIgnoreCase(".00")) {
+                } else if (GlobalVariables.ConvertDouble(Double.valueOf(Double.parseDouble(value))).equalsIgnoreCase("0.00")
+                        || GlobalVariables.ConvertDouble(Double.valueOf(Double.parseDouble(value))).equalsIgnoreCase(".00")) {
                     Toast.makeText(this, "Amount should be greater than Rs 0.00", Toast.LENGTH_SHORT).show();
                 } else {
                     AddDuesIntent();
@@ -535,7 +535,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                 if (duesImage.get(i).isEmpty()) {
                     String strImageUri = DuesSharedWithModel.getImage(duesNumber.get(i));
 
-                    if (strImageUri == null) {
+                    if (strImageUri.isEmpty()) {
                         Uri uri = new Uri.Builder().scheme("res") // "res"
                                 .path(String.valueOf(R.drawable.icon_placeholder)).build();
                         img.setImageURI(uri);
@@ -547,7 +547,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 update_position = i;
-                txtUserName.setText(usrname + " Paid");
+                txtUserName.setText("Created By " + usrname);
                 is_payee_changed = true;
                 PayeeNo = duesNumber.get(i);
                 dialog.dismiss();
@@ -619,19 +619,19 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
     private void QueryUserID() {
 
-        flag_exists = new Boolean[duesNumber.size()];
-        Arrays.fill(flag_exists,Boolean.FALSE);
+        flag_User_exists = new Boolean[duesNumber.size()];
+        Arrays.fill(flag_User_exists, Boolean.FALSE);
 
         userDataRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String userID = dataSnapshot.getKey();
-                Log.e(TAG,"User ID : "+userID);
-                for (int i = 0; i < duesNumber.size(); i++){
-                    Log.e(TAG,"DuesNumber "+i+" : "+duesNumber.get(i));
-                    if (userID.equalsIgnoreCase(duesNumber.get(i))){
-                        Log.e(TAG,"User ID Exists");
-                        flag_exists[i] = true;
+                Log.e(TAG, "User ID : " + userID);
+                for (int i = 0; i < duesNumber.size(); i++) {
+                    Log.e(TAG, "DuesNumber " + i + " : " + duesNumber.get(i));
+                    if (userID.equalsIgnoreCase(duesNumber.get(i))) {
+                        Log.e(TAG, "User ID Exists");
+                        flag_User_exists[i] = true;
                     }
                 }
             }
@@ -660,16 +660,16 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         userDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e(TAG,"DATA LOADED");
-                for (int i = 0; i<duesNumber.size(); i++)
-                    Log.e(TAG,"Flag Exists "+i+" : "+flag_exists[i]);
+                Log.e(TAG, "DATA LOADED");
+                for (int i = 0; i < duesNumber.size(); i++)
+                    Log.e(TAG, "Flag Exists " + i + " : " + flag_User_exists[i]);
 
                 AddDuesInFirebase();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG,"ERROR AFTER LOADED");
+                Log.e(TAG, "ERROR AFTER LOADED");
             }
         });
 
@@ -677,41 +677,49 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
     private void QueryHomeDues() {
 
-        flag_exist = new Boolean[duesNumber.size()];
-        Arrays.fill(flag_exist,Boolean.FALSE);
+        flag_HomeDue_exists = new Boolean[duesNumber.size()];
+        Arrays.fill(flag_HomeDue_exists, Boolean.FALSE);
 
         homeDuesDataRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String userID = dataSnapshot.getKey();
-                String paytype = "";
-                Log.e(TAG,"User ID : "+userID);
-                for (int i = 0; i < duesNumber.size(); i++){
-                    Log.e(TAG,"DuesNumber "+i+" : "+duesNumber.get(i));
-                    if (userID.equalsIgnoreCase(duesNumber.get(i))){
-                        Log.e(TAG,"User ID Exists");
-                        flag_exists[i] = true;
+                Log.e(TAG, "CHILD ADDED Called");
+                Log.e(TAG, "User ID : " + userID);
+                for (int i = 0; i < duesNumber.size(); i++) {
+                    Log.e(TAG, "DuesNumber " + i + " : " + duesNumber.get(i));
+                    if (userID.equalsIgnoreCase(duesNumber.get(i))) {
+                        Log.e(TAG, "User ID Exists");
+                        flag_HomeDue_exists[i] = true;
                         HomeDuesModel homeDuesModel = dataSnapshot.getValue(HomeDuesModel.class);
+                        Log.e(TAG, "Total Amount : " + strAmount);
                         Float avgamt = Float.valueOf(strAmount) / Float.valueOf(duesNumber.size());
+                        Log.e(TAG, "Avg amt : " + avgamt);
+                        Log.e(TAG, "Dues Amount : " + duesAmount.get(i));
                         Float self_amt = avgamt - Float.valueOf(duesAmount.get(i));
+                        Log.e(TAG, "Self_amt : " + self_amt);
                         Double total_amt = Double.parseDouble(homeDuesModel.getAmount()) + self_amt;
-                        String amount = MainActivity.ConvertDouble(total_amt);
-                        if (total_amt < 0)
-                            paytype = "iPay";
-                        if (total_amt == 0)
-                            paytype = "NoDue";
-                        if (total_amt > 0)
-                            paytype = "iGet";
+                        Log.e(TAG, "Total amt : " + total_amt);
+                        String amount = GlobalVariables.ConvertDouble(total_amt);
+                        Log.e(TAG, "Final Amt : " + amount);
+                        homeDuesModel.setUserID(duesNumber.get(i));
+                        homeDuesModel.setAmount(amount);
 
-                        homeDuesDataRef.child(duesNumber.get(i)).child("amount").setValue(amount);
-                        homeDuesDataRef.child(duesNumber.get(i)).child("payType").setValue(paytype);
+                        if (total_amt < 0)
+                            homeDuesModel.setPayType("iGet");
+                        else if (total_amt == 0)
+                            homeDuesModel.setPayType("NoDue");
+                        else if (total_amt > 0)
+                            homeDuesModel.setPayType("iPay");
+
+                        homeDuesDataRef.child(duesNumber.get(i)).setValue(homeDuesModel);
                     }
                 }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                Log.e(TAG, "Child Changed Called");
             }
 
             @Override
@@ -733,22 +741,22 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         homeDuesDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e(TAG,"DATA LOADED");
-                for (int i = 0; i<duesNumber.size(); i++)
-                    Log.e(TAG,"Flag Exists "+i+" : "+flag_exists[i]);
+                Log.e(TAG, "DATA LOADED");
+                for (int i = 0; i < duesNumber.size(); i++)
+                    Log.e(TAG, "Flag Exists " + i + " : " + flag_HomeDue_exists[i]);
 
                 AddHomeDuesInFirebase();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG,"ERROR AFTER LOADED");
+                Log.e(TAG, "ERROR AFTER LOADED");
             }
         });
 
     }
 
-    private void AddDuesInFirebase(){
+    private void AddDuesInFirebase() {
 
         StringBuilder sbNumber = new StringBuilder();
         StringBuilder sbName = new StringBuilder();
@@ -765,13 +773,12 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         UserModel userModel = new UserModel();
         UserDuesModel userDuesModel = new UserDuesModel();
 
-        for (int i = 0; i < duesNumber.size(); i++){
-            if (duesNumber.get(i).length() <= 10){
+        for (int i = 0; i < duesNumber.size(); i++) {
+            if (duesNumber.get(i).length() <= 10) {
                 sbNumber.append(duesNumber.get(i));
                 if (i != duesNumber.size())
                     sbNumber.append(",");
-            }
-            else{
+            } else {
                 sbNumber.append(duesNumber.get(i).substring(duesNumber.get(i).length() - 10));
                 if (i != duesNumber.size())
                     sbNumber.append(",");
@@ -803,7 +810,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         Log.e("SplitDuesActivity", "strImage : " + strImage);
 
         for (int count = 0; count < duesAmount.size(); count++) {
-            sbPaidAmt.append(MainActivity.ConvertDouble(Double.valueOf(duesAmount.get(count))));
+            sbPaidAmt.append(GlobalVariables.ConvertDouble(Double.valueOf(duesAmount.get(count))));
             if (count != duesAmount.size() - 1) {
                 sbPaidAmt.append(",");
             }
@@ -816,7 +823,7 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
         if (!is_toggle) {
 
             for (int i = 0; i < duesNumber.size(); i++) {
-                String amtDivided = MainActivity.ConvertDouble(Double.valueOf(avgamt - Float.parseFloat(duesAmount.get(i))));
+                String amtDivided = GlobalVariables.ConvertDouble(Double.valueOf(avgamt - Float.parseFloat(duesAmount.get(i))));
                 sbDividedAmt.append(amtDivided);
                 if (i != duesNumber.size()) {
                     sbDividedAmt.append(",");
@@ -833,9 +840,9 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
                 + "\nDues Image : " + strImage
                 + "\nDues Amount : " + strAmtPaid);
 
-        for (int i = 0; i < duesNumber.size(); i++){
-            Log.e(TAG,"Dues Number"+i+" : "+duesNumber.get(i)+"\nFlag Exists"+i+" : "+flag_exists[i]);
-            if (!flag_exists[i]){
+        for (int i = 0; i < duesNumber.size(); i++) {
+            Log.e(TAG, "Dues Number " + i + " : " + duesNumber.get(i) + "\nFlag Exists" + i + " : " + flag_User_exists[i]);
+            if (!flag_User_exists[i]) {
                 userModel.setUserID(duesNumber.get(i));
                 userModel.setPhoneNumber(duesNumber.get(i));
                 userModel.setUsername(duesName.get(i));
@@ -886,15 +893,15 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
         QueryHomeDues();
 
-        startActivity(new Intent(this,MainActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
-    private void AddHomeDuesInFirebase(){
+    private void AddHomeDuesInFirebase() {
 
-        for (int i = 0; i < duesNumber.size(); i++){
-            Log.e(TAG,"Dues Number"+i+" : "+duesNumber.get(i)+"\nFlag Exists"+i+" : "+flag_exists[i]);
-            if (!flag_exists[i]){
+        for (int i = 0; i < duesNumber.size(); i++) {
+            Log.e(TAG, "Dues Number " + i + " : " + duesNumber.get(i) + "\nFlag Exists " + i + " : " + flag_HomeDue_exists[i]);
+            if (!flag_HomeDue_exists[i]) {
                 HomeDuesModel homeDuesModel = new HomeDuesModel();
 
                 homeDuesModel.setUserID(duesNumber.get(i));
@@ -903,11 +910,10 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
 
                 if (self_amt < 0)
                     homeDuesModel.setPayType("iPay");
-                if (self_amt == 0)
-                    homeDuesModel.setPayType("NoDue");
-                if (self_amt > 0)
+                else if (self_amt >= 0)
                     homeDuesModel.setPayType("iGet");
-                String amount = MainActivity.ConvertDouble(Double.valueOf(self_amt));
+
+                String amount = GlobalVariables.ConvertDouble(Double.valueOf(self_amt));
                 homeDuesModel.setAmount(amount);
                 homeDuesDataRef.child(duesNumber.get(i)).setValue(homeDuesModel);
             }
@@ -926,10 +932,10 @@ public class SplitDueActivity extends AppCompatActivity implements View.OnClickL
             amount += Float.valueOf(duesAmount.get(i));
         }
 
-        Log.e("SplitDueActivity", "Amount : " + MainActivity.ConvertDouble((double) amount));
+        Log.e("SplitDueActivity", "Amount : " + GlobalVariables.ConvertDouble((double) amount));
 
-        txtTotalAmount.setText(MainActivity.ConvertDouble((double) amount));
-        edittexttotalamount = MainActivity.ConvertDouble((double) amount);
+        txtTotalAmount.setText(GlobalVariables.ConvertDouble((double) amount));
+        edittexttotalamount = GlobalVariables.ConvertDouble((double) amount);
         editAmount.setVisibility(View.VISIBLE);
         is_amount_item_changed = true;
 

@@ -44,7 +44,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
 
             listGroup.setVisibility(View.GONE);
             txtGroupListMsg.setVisibility(View.VISIBLE);
-            txtGroupListMsg.setText("No Groups have been Created!!");
+            txtGroupListMsg.setText(R.string.no_groups);
             
         }
         else {

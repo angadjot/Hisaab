@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tech.petabyteboy.hisaab.Models.HomeDuesModel;
 import com.tech.petabyteboy.hisaab.Models.UserModel;
 
 import java.text.DecimalFormat;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static TextView txtAmount;
 
     private UserModel User;
+    private HomeDuesModel homeDuesModel;
 
     private String TAG = "MainActivity";
 
@@ -106,11 +108,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         DatabaseReference userdataReference = firebaseDatabase.getReference().child("Users").child(UserID);
 
-        userdataReference.addValueEventListener(new ValueEventListener() {
+        userdataReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User = dataSnapshot.getValue(UserModel.class);
                 setValues();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        Log.e(TAG,"User ID : "+UserID);
+        final DatabaseReference homedueDataRef = firebaseDatabase.getReference().child("HomeDues").child(UserID);
+
+        homedueDataRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    homeDuesModel = dataSnapshot.getValue(HomeDuesModel.class);
+                    if (homeDuesModel.getAmount().isEmpty()) {
+                        txtAmount.setText("Your Get : \u20B9 0.00");
+                    } else {
+                        if (homeDuesModel.getPayType().equalsIgnoreCase("iPay")) {
+                            txtAmount.setText("You Pay : \u20B9 " + homeDuesModel.getAmount().replace("-",""));
+                        } else if (homeDuesModel.getPayType().equalsIgnoreCase("NoDue")) {
+                            txtAmount.setText("Your Get : \u20B9 0.00");
+                        } else if (homeDuesModel.getPayType().equalsIgnoreCase("iGet")) {
+                            txtAmount.setText("You Get : \u20B9 " + homeDuesModel.getAmount().replace("-",""));
+                        }
+                    }
+                }
+                else {
+                    txtAmount.setText("Your Get : \u20B9 0.00");
+                }
             }
 
             @Override
@@ -146,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (selectedItem) {
             case R.id.home:
-                startActivity(new Intent(this,MainActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
                 finish();
                 break;
             case R.id.invite_friends:
@@ -244,19 +277,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
     }
-
-    public static String ConvertDouble(Double value) {
-        String angleFormated = new DecimalFormat("#.00").format(value);
-        if (value < 1.0d && value > 0.0d) {
-            return "0.00";
-        }
-        if (angleFormated.contains("-") && angleFormated.length() == 4) {
-            return "00.00";
-        }
-        if (angleFormated.equalsIgnoreCase(".00")) {
-            return "0.00";
-        }
-        return angleFormated;
-    }
-
 }

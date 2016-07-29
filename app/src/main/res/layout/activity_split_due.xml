@@ -120,12 +120,12 @@
                             android:id="@+id/txtUserNameSplit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
+                            android:gravity="center|left"
                             android:maxLines="2"
                             android:singleLine="false"
-                            android:text="@string/you_paid"
+                            android:text="@string/created_by"
                             android:textColor="@color/darkgray"
-                            android:textSize="14dp" />
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/changepayee"
@@ -215,7 +215,8 @@
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
 
                     <RelativeLayout
                         android:id="@+id/layFood"

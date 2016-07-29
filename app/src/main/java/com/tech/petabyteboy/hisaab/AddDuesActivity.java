@@ -68,7 +68,6 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
     private GridView gridSelectedContact;
 
     private String strDueType;
-    private String passedFrom;
 
     // key Values for Intent and Request Code
     public static final String amount_key = "amount";
@@ -105,7 +104,7 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
 
         DatabaseReference userdataReference = firebaseDatabase.getReference().child("Users").child(UserID);
 
-        userdataReference.addValueEventListener(new ValueEventListener() {
+        userdataReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User = dataSnapshot.getValue(UserModel.class);
@@ -119,11 +118,22 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
+        userdataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                initCreate();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void initCreate(){
         toolbar_add_dues = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar_add_dues);
-
-        passedFrom = getIntent().getStringExtra("from");
-        Log.e(TAG, "Passed From : " + passedFrom);
 
         btn_cross = (ImageButton) findViewById(R.id.btn_cross);
         btn_cross.setOnClickListener(this);
@@ -132,7 +142,7 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
         btn_next.setOnClickListener(this);
 
         txtUserName = (TextView) findViewById(R.id.txtUserName);
-        txtUserName.setText("You Paid");
+        txtUserName.setText(R.string.created_by);
 
         editAmount = (EditText) findViewById(R.id.editAmount);
         editComment = (EditText) findViewById(R.id.editComment);
@@ -179,7 +189,6 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
 
         init();
     }
-
     private void init() {
 
         if (adapter == null) {
@@ -415,9 +424,9 @@ public class AddDuesActivity extends AppCompatActivity implements View.OnClickLi
         }
         if (requestCode == REQUEST_SELECT_CONTACT && resultCode == RESULT_OK) {
 
-            String name = null;
-            String phoneNo = null;
-            String image_thumb = null;
+            String name = "";
+            String phoneNo = "";
+            String image_thumb = "";
 
             Cursor cursor = getContentResolver().query(data.getData(), null, null, null, "display_name ASC");
             while (cursor.moveToNext()) {

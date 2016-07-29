@@ -1,6 +1,7 @@
 package com.tech.petabyteboy.hisaab;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,17 +18,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tech.petabyteboy.hisaab.Adapters.DuesViewAdapter;
-import com.tech.petabyteboy.hisaab.Models.DuesDataObject;
 import com.tech.petabyteboy.hisaab.Models.UserDuesModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class DuesFragment extends Fragment implements View.OnClickListener {
 
@@ -36,19 +36,18 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private static String LOG_TAG = "DuesFragment";
-
-    public float intAllAmount = 0.0f;
-    public float intIGet = 0.0f;
-    public float intIPay = 0.0f;
+    private static String TAG = "DuesFragment";
 
     private TextView txtMessage;
 
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference duesDatabaseRef;
+    private DatabaseReference duesDataRef;
 
-    private String TAG = "DuesFragment";
     private String UserID;
+    private Boolean flag_Dues_exists = false;
+
+    public static ArrayList<UserDuesModel> userDuesModelArrayList;
+    private ProgressDialog progressDialog;
 
     @Nullable
     @Override
@@ -60,32 +59,107 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
         UserID = UserDetail.getString("phone", null);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        duesDatabaseRef = firebaseDatabase.getReference().child("Dues");
+        duesDataRef = firebaseDatabase.getReference().child("Dues").child(UserID);
 
-        txtMessage = (TextView) view.findViewById(R.id.txtDuesMsg);
+        userDuesModelArrayList = new ArrayList<>();
+
+        progressDialog = new ProgressDialog(getContext());
 
         add_dues = (FloatingActionButton) view.findViewById(R.id.fab);
         add_dues.setOnClickListener(this);
 
+        txtMessage = (TextView) view.findViewById(R.id.txtDuesMsg);
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.cardList);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new DuesViewAdapter(getDataSet());
+        mAdapter = new DuesViewAdapter(userDuesModelArrayList, getContext());
         mRecyclerView.setAdapter(mAdapter);
+
+        duesDataRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.hasChildren()) {
+                    flag_Dues_exists = true;
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        duesDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e(TAG, "DATA Checked");
+
+                if (flag_Dues_exists) {
+                    FetchData();
+                } else {
+                    txtMessage.setVisibility(View.VISIBLE);
+                    txtMessage.setText("No Dues Yet!!");
+                }
+
+                if (progressDialog != null) {
+                    progressDialog.hide();
+                    progressDialog = null;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((DuesViewAdapter) mAdapter).setOnItemClickListener(new DuesViewAdapter.MyClickListener() {
+    private void FetchData() {
+        duesDataRef.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onItemClick(int position, View v) {
-                Toast.makeText(getContext(), "Clicked on Item " + position, Toast.LENGTH_SHORT).show();
-                Log.i(LOG_TAG, " Clicked on Item " + position);
-                startActivity(new Intent(getContext(), FriendProfileActivity.class));
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                UserDuesModel userDuesModel = dataSnapshot.getValue(UserDuesModel.class);
+                userDuesModelArrayList.add(userDuesModel);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
@@ -93,33 +167,22 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(getContext(), AddDuesActivity.class);
-        intent.putExtra("from", "home");
         startActivity(intent);
-
     }
 
-    public void setCalculateValue() {
-        float totalAmount = this.intIGet - this.intIPay;
-        if (totalAmount > 0.0f) {
-            MainActivity.txtAmount.setText("You Get \u20b9 " + String.valueOf(totalAmount));
-            return;
-        }
-        String amt = Float.valueOf(totalAmount).toString();
-        if (amt.equalsIgnoreCase("0.00")) {
-            MainActivity.txtAmount.setText("You Get \u20b9 " + amt);
-        } else {
-            MainActivity.txtAmount.setText("You Pay \u20b9 " + amt);
-        }
-    }
+    @Override
+    public void onResume() {
+        super.onResume();
 
-    private ArrayList<DuesDataObject> getDataSet() {
-        ArrayList results = new ArrayList<DuesDataObject>();
-        for (int index = 0; index < 20; index++) {
-            DuesDataObject obj = new DuesDataObject("Some Primary Text " + index,
-                    "Secondary " + index);
-            results.add(index, obj);
-        }
-        return results;
-    }
+        ((DuesViewAdapter) mAdapter).setOnItemClickListener(new DuesViewAdapter.MyClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                Log.e(TAG, "Clicked on Item " + position);
+                Intent intent = new Intent(getContext(), DuesDetailActivity.class);
+                intent.putExtra("position", position);
+                startActivity(intent);
+            }
+        });
 
+    }
 }

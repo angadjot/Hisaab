@@ -62,7 +62,7 @@
     <string name="add_group_simplfy">Simplify in-group expense</string>
     <string name="dialog_verify_otp">Verify OTP</string>
     <string name="amount">Amount</string>
-    <string name="you_paid">You Paid</string>
+    <string name="created_by">Created By You</string>
     <string name="group_detail_title">Group Details</string>
     <string name="summary">SUMMARY</string>
     <string name="edit">EDIT</string>

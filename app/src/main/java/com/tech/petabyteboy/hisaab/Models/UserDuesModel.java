@@ -17,6 +17,8 @@ public class UserDuesModel {
     private Integer Shared_among_size;
     private String Total_amt;
     private String Who_created_id;
+    private String due_image;
+    private Boolean settle;
 
     public UserDuesModel(){
         Category = "";
@@ -31,6 +33,8 @@ public class UserDuesModel {
         Shared_among_size = 0;
         Total_amt = "";
         Who_created_id = "";
+        due_image = "";
+        settle = false;
     }
 
     public String getCategory() {
@@ -127,5 +131,21 @@ public class UserDuesModel {
 
     public void setWho_created_id(String who_created_id) {
         Who_created_id = who_created_id;
+    }
+
+    public String getDue_image() {
+        return due_image;
+    }
+
+    public void setDue_image(String due_image) {
+        this.due_image = due_image;
+    }
+
+    public Boolean getSettle() {
+        return settle;
+    }
+
+    public void setSettle(Boolean settle) {
+        this.settle = settle;
     }
 }

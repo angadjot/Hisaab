@@ -20,12 +20,12 @@
             android:id="@+id/txtDuesMsg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="12dp"
             android:gravity="center"
             android:text="@string/no_dues"
             android:textColor="@color/davy_grey"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:visibility="gone"/>
+            android:textSize="30sp"
+            android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/cardList"

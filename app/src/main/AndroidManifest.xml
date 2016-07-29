@@ -2,17 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tech.petabyteboy.hisaab">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-feature
-        android:name="android.hardware.Camera"
-        android:required="true" />
-
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -54,8 +49,8 @@
         <activity android:name=".GroupDetailActivity" />
         <activity android:name=".GroupSummaryActivity" />
         <activity android:name=".SplitDueActivity" />
-        <activity android:name=".FriendProfileActivity" />
         <activity android:name=".AddGroupDuesActivity" />
+        <activity android:name=".DuesDetailActivity"></activity>
     </application>
 
 </manifest>
