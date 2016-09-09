@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.tech.petabyteboy.hisaab.Global.GlobalVariables;
+import com.tech.petabyteboy.hisaab.Global.HelperClass;
 import com.tech.petabyteboy.hisaab.Models.DuesSharedWithModel;
 import com.tech.petabyteboy.hisaab.R;
 
@@ -39,12 +39,12 @@ public class DuesSharedWithListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return GlobalVariables.data.size();
+        return HelperClass.data.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return GlobalVariables.data.get(i);
+        return HelperClass.data.get(i);
     }
 
     @Override
@@ -74,34 +74,34 @@ public class DuesSharedWithListAdapter extends BaseAdapter {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
-                DuesSharedWithModel model = GlobalVariables.data.get(position);
+                DuesSharedWithModel model = HelperClass.data.get(position);
 
                 if (model.isSeleted) {
                     Log.e("DuesShared", "WithList Adapter Inside isSelected : " + model.isSeleted);
 
                     model.isSeleted = false;
-                    GlobalVariables.data.set(position, model);
+                    HelperClass.data.set(position, model);
 
-                    Log.e("DuesShared", "WithListAdapter GlobalVariables.data Values \n"
-                            + "Name : " + GlobalVariables.data.get(position).getName() + "\n"
-                            + "Number : " + GlobalVariables.data.get(position).getNumber() + "\n"
-                            + "Image : " + GlobalVariables.data.get(position).getImage() + "\n"
-                            + "AddBtn : " + GlobalVariables.data.get(position).getAddBtn() + "\n"
-                            + "isSelected : " + GlobalVariables.data.get(position).isSeleted() + "\n");
+                    Log.e("DuesShared", "WithListAdapter HelperClass.data Values \n"
+                            + "Name : " + HelperClass.data.get(position).getName() + "\n"
+                            + "Number : " + HelperClass.data.get(position).getNumber() + "\n"
+                            + "Image : " + HelperClass.data.get(position).getImage() + "\n"
+                            + "AddBtn : " + HelperClass.data.get(position).getAddBtn() + "\n"
+                            + "isSelected : " + HelperClass.data.get(position).isSeleted() + "\n");
 
                     holder.imgCheckedImage.setVisibility(View.GONE);
                 } else {
                     Log.e("DuesShared", "WithList Adapter Inside isSelected : " + model.isSeleted);
 
                     model.isSeleted = true;
-                    GlobalVariables.data.set(position, model);
+                    HelperClass.data.set(position, model);
 
-                    Log.e("DuesShared", "WithListAdapter GlobalVariables.data Values \n"
-                            + "Name : " + GlobalVariables.data.get(position).getName() + "\n"
-                            + "Number : " + GlobalVariables.data.get(position).getNumber() + "\n"
-                            + "Image : " + GlobalVariables.data.get(position).getImage() + "\n"
-                            + "AddBtn : " + GlobalVariables.data.get(position).getAddBtn() + "\n"
-                            + "isSelected : " + GlobalVariables.data.get(position).isSeleted() + "\n");
+                    Log.e("DuesShared", "WithListAdapter HelperClass.data Values \n"
+                            + "Name : " + HelperClass.data.get(position).getName() + "\n"
+                            + "Number : " + HelperClass.data.get(position).getNumber() + "\n"
+                            + "Image : " + HelperClass.data.get(position).getImage() + "\n"
+                            + "AddBtn : " + HelperClass.data.get(position).getAddBtn() + "\n"
+                            + "isSelected : " + HelperClass.data.get(position).isSeleted() + "\n");
 
                     holder.imgCheckedImage.setVisibility(View.VISIBLE);
                 }
@@ -109,7 +109,7 @@ public class DuesSharedWithListAdapter extends BaseAdapter {
         });
 
         try {
-            DuesSharedWithModel model = GlobalVariables.data.get(position);
+            DuesSharedWithModel model = HelperClass.data.get(position);
 
             if (model.isSeleted)
                 holder.imgCheckedImage.setVisibility(View.VISIBLE);
@@ -157,9 +157,9 @@ public class DuesSharedWithListAdapter extends BaseAdapter {
     public ArrayList<DuesSharedWithModel> getSelected() {
 
         ArrayList<DuesSharedWithModel> dataSelected = new ArrayList<>();
-        for (int i = 0; i < GlobalVariables.data.size(); i++) {
-            if (GlobalVariables.data.get(i).isSeleted) {
-                dataSelected.add(GlobalVariables.data.get(i));
+        for (int i = 0; i < HelperClass.data.size(); i++) {
+            if (HelperClass.data.get(i).isSeleted) {
+                dataSelected.add(HelperClass.data.get(i));
             }
         }
 

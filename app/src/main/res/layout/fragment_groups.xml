@@ -10,7 +10,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/empty_back">
+        android:background="@color/empty_back"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp">
 
         <TextView
             android:id="@+id/txtGroupListMsg"
@@ -21,22 +25,13 @@
             android:text="@string/no_groups"
             android:textColor="@color/davy_grey"
             android:textSize="30sp"
-            android:visibility="gone"/>
+            android:visibility="visible" />
 
-        <ListView
-            android:id="@+id/listGroup"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/GroupCardList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_margin="8dp"
-            android:background="@color/white"
-            android:cacheColorHint="@color/backgrey"
-            android:divider="@color/dividerColor"
-            android:dividerHeight="1dp"
-            android:listSelector="@color/white"
-            android:scrollbars="none"
-            android:visibility="visible"/>
-
+            android:visibility="gone" />
 
     </FrameLayout>
 

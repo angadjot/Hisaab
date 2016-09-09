@@ -95,9 +95,9 @@
                         android:layout_weight="6.0"
                         android:gravity="center_vertical"
                         android:paddingLeft="5dp"
-                        android:text="Total Group Dues"
+                        android:text="@string/total_group_dues"
                         android:textColor="@color/black"
-                        android:textSize="16dp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/textTotalGroupDue"
@@ -109,7 +109,7 @@
                         android:gravity="center_vertical|right"
                         android:paddingRight="5dp"
                         android:textColor="@color/white"
-                        android:textSize="16dp" />
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -128,9 +128,9 @@
                         android:layout_weight="6.0"
                         android:gravity="center_vertical"
                         android:paddingLeft="5dp"
-                        android:text="You Paid (Total)"
+                        android:text="@string/you_paid_total"
                         android:textColor="@color/black"
-                        android:textSize="16dp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/textYouPaid"
@@ -142,7 +142,7 @@
                         android:gravity="center_vertical|right"
                         android:paddingRight="5dp"
                         android:textColor="@color/white"
-                        android:textSize="16dp" />
+                        android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -170,7 +170,7 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:textColor="@color/black"
-                android:textSize="16dp" />
+                android:textSize="16sp" />
         </RelativeLayout>
     </FrameLayout>
 

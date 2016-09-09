@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -40,7 +41,6 @@
         <activity android:name=".RecentActivities" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".AddGroupActivity" />
-        <activity android:name=".AddDuesActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
@@ -48,9 +48,11 @@
 
         <activity android:name=".GroupDetailActivity" />
         <activity android:name=".GroupSummaryActivity" />
-        <activity android:name=".SplitDueActivity" />
+        <activity android:name=".SplitDuesActivity" />
         <activity android:name=".AddGroupDuesActivity" />
-        <activity android:name=".DuesDetailActivity"></activity>
+        <activity android:name=".DuesDetailActivity" />
+        <activity android:name=".AddDuesDetailActivity" />
+        <activity android:name=".AddDuesActivity"/>
     </application>
 
 </manifest>

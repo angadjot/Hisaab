@@ -2,7 +2,6 @@ package com.tech.petabyteboy.hisaab;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,13 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by petabyteboy on 09/07/16.
- */
 public class TabFragment extends Fragment {
-
-    public FloatingActionButton fabDues;
-    public FloatingActionButton fabEvents;
 
     public static TabLayout tabLayout;
     public static ViewPager viewPager;
@@ -28,10 +21,10 @@ public class TabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View x =  inflater.inflate(R.layout.main_tab,null);
-        tabLayout = (TabLayout) x.findViewById(R.id.tabs);
+        View view =  inflater.inflate(R.layout.main_tab,null);
+        tabLayout = (TabLayout) view.findViewById(R.id.tabs);
 
-        viewPager = (ViewPager) x.findViewById(R.id.viewpager);
+        viewPager = (ViewPager) view.findViewById(R.id.viewpager);
         viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
 
         tabLayout.post(new Runnable() {
@@ -41,7 +34,7 @@ public class TabFragment extends Fragment {
             }
         });
 
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
@@ -58,7 +51,7 @@ public class TabFragment extends Fragment {
             }
         });
 
-        return x;
+        return view;
     }
 
     class MyAdapter extends FragmentPagerAdapter {

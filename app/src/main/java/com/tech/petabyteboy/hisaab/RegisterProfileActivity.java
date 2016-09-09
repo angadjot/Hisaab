@@ -3,6 +3,7 @@ package com.tech.petabyteboy.hisaab;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,6 +48,7 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
     private AutoCompleteTextView txtCountry;
     private TextView txt_dob;
     private TextView txt_gender;
+    private ProgressDialog progress;
 
     public static String strPhoneNo;
     public static String strUserName;
@@ -72,9 +74,9 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_profile);
 
-        SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME,MODE_PRIVATE);
+        SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME, MODE_PRIVATE);
 
-        strPhoneNo = userPref.getString("phone",null);
+        strPhoneNo = userPref.getString("phone", null);
         strUserName = getIntent().getExtras().getString(RegisterActivity.username_key);
         strPassword = getIntent().getExtras().getString(RegisterActivity.userID_key);
         strImage = getIntent().getExtras().getString(RegisterActivity.imgProfile_key);
@@ -88,8 +90,6 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
         if (!strImage.equalsIgnoreCase("") || !strImage.isEmpty()) {
             user.setImage(strImage);
         }
-
-        Log.e(TAG, "Saved in SharedPref : " + strPhoneNo);
 
         txt_dob = (TextView) findViewById(R.id.txt_dob);
         txt_dob.setOnClickListener(this);
@@ -106,6 +106,8 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
 
         Button btn_done = (Button) findViewById(R.id.btn_done);
         btn_done.setOnClickListener(this);
+
+        progress = new ProgressDialog(this);
 
         dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
@@ -221,19 +223,29 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
 
         strEmailID = editEmail.getText().toString();
 
-        if (strEmailID.isEmpty() || strEmailID.equalsIgnoreCase("")){
+        if (strEmailID.isEmpty() || strEmailID.equalsIgnoreCase("")) {
             Toast.makeText(this, "Please Enter any of detail and then press Later.", Toast.LENGTH_SHORT).show();
             return;
-        }else {
+        } else {
             user.setEmailID(strEmailID);
-            Log.e(TAG,"EmailID : "+strEmailID);
+            Log.e(TAG, "EmailID : " + user.getEmailID());
         }
 
-        createAccount(strEmailID, strPassword);
-
-        signIn(strEmailID, strPassword);
-
-        MainActivityIntent();
+        mAuth.signInWithEmailAndPassword(strEmailID,strPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    Log.e(TAG, "Log in Successful");
+                    progress.dismiss();
+                    Toast.makeText(getApplicationContext(),"Login Successful",Toast.LENGTH_SHORT).show();
+                    LogInIntent();
+                }else{
+                    Log.e(TAG, "Authentication failed.Account Doesn't Exists");
+                    progress.dismiss();
+                    createAccount(strEmailID, strPassword);
+                }
+            }
+        });
 
     }
 
@@ -244,7 +256,7 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
         strEmailID = editEmail.getText().toString();
 
         if (strDOB.isEmpty()) {
-            Toast.makeText(this, "Please Enter any of detail and press Done.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please Enter all the detail and press Done.", Toast.LENGTH_SHORT).show();
             return;
         } else {
             user.setDateOfBirth(strDOB);
@@ -252,34 +264,114 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
 
 
         if (strGender.isEmpty() || strGender.equalsIgnoreCase("Gender")) {
-            Toast.makeText(this, "Please Enter any of detail and press Done.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please Enter all the detail and press Done.", Toast.LENGTH_SHORT).show();
             return;
         } else {
             user.setGender(strGender);
         }
 
         if (strCity.isEmpty() || strCity.equalsIgnoreCase("City")) {
-            Toast.makeText(this, "Please Enter any of detail and press Done.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please Enter all the detail and press Done.", Toast.LENGTH_SHORT).show();
             return;
         } else
             user.setCity(strCity);
 
         if (strEmailID.isEmpty()) {
-            Toast.makeText(this, "Please Enter any of detail and press Done.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please Enter all the detail and press Done.", Toast.LENGTH_SHORT).show();
             return;
         } else {
             user.setEmailID(strEmailID);
         }
 
-        createAccount(strEmailID, strPassword);
+        progress.setMessage("Checking Account...\nPlease Wait...");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        progress.setProgress(0);
+        progress.show();
 
-        signIn(strEmailID, strPassword);
-
-        MainActivityIntent();
+        mAuth.signInWithEmailAndPassword(strEmailID,strPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    Log.e(TAG, "Log in Successful");
+                    progress.dismiss();
+                    Toast.makeText(getApplicationContext(),"Login Successful",Toast.LENGTH_SHORT).show();
+                    LogInIntent();
+                }else{
+                    Log.e(TAG, "Authentication failed.Account Doesn't Exists");
+                    progress.dismiss();
+                    createAccount(strEmailID, strPassword);
+                }
+            }
+        });
 
     }
 
+    private void createAccount(final String email, final String password) {
+
+        progress.setMessage("Registering...\nPlease Wait...");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        progress.setProgress(0);
+        progress.show();
+
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.e(TAG, "createUserWithEmail : onComplete : " + task.isSuccessful());
+                        if (!task.isSuccessful()) {
+                            Log.e(TAG, "Authentication failed.");
+                            progress.dismiss();
+                            Toast.makeText(getApplicationContext(),"Problem Creating Account...\nPlease Try again...",Toast.LENGTH_SHORT).show();
+                        } else {
+                            User = task.getResult().getUser();
+                            progress.dismiss();
+                            Toast.makeText(getApplicationContext(),"Account Created Successfully.",Toast.LENGTH_SHORT).show();
+                            signIn(email, password);
+                        }
+
+                    }
+                });
+
+    }
+
+    private void signIn(String email, final String password) {
+
+        progress.setMessage("Signing In...\nPlease Wait...");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        progress.setProgress(0);
+        progress.show();
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.e(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                        if (!task.isSuccessful()) {
+                            Log.e(TAG, "signInWithEmail : ", task.getException());
+                            Log.e(TAG, "Authentication failed.");
+                            progress.dismiss();
+                            Toast.makeText(getApplicationContext(),"Authentication Problem. Please try again.",Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "Log in Successful");
+                            progress.dismiss();
+                            Toast.makeText(getApplicationContext(),"Login Successful",Toast.LENGTH_SHORT).show();
+                            MainActivityIntent();
+                        }
+                    }
+
+                });
+    }
+
     private void MainActivityIntent() {
+
+        progress.setMessage("Loading Data...\nPlease Wait...");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        progress.setProgress(0);
+        progress.show();
 
         mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
@@ -290,69 +382,71 @@ public class RegisterProfileActivity extends AppCompatActivity implements View.O
 
         if (User != null) {
 
-            if (strImage != null && !strImage.equalsIgnoreCase("null")) {
+            if (strImage != null && !strImage.equalsIgnoreCase("")) {
                 storeRef.child(user.getUserID()).child("Images").putFile(Uri.parse(strImage)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri uri = taskSnapshot.getDownloadUrl();
                         Log.e(TAG, "Image URI : " + uri);
                         user.setImage(String.valueOf(uri));
+
+                        Log.e(TAG, "Users Detail : \nUsername = " + user.getUsername() + "\nImage = " + user.getImage() +
+                                "\nPhoneNumber = " + user.getPhoneNumber() + "\nGender = " + user.getGender() +
+                                "\nEmailID = " + user.getEmailID() + "\nCity = " + user.getCity() +
+                                "\nDateOfBirth = " + user.getDateOfBirth() + "\nUserID = " + user.getUserID());
+
+                        userDataRef.child("Users").child(user.getUserID()).setValue(user);
+
+                        progress.dismiss();
+
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
                 });
             }
+            else{
 
-            Log.e(TAG, "Users Detail : \nUsername = " + user.getUsername() + "\nImage = " + user.getImage() +
-                    "\nPhoneNumber = " + user.getPhoneNumber() + "\nGender = " + user.getGender() +
-                    "\nEmailID = " + user.getEmailID() + "\nCity = " + user.getCity() +
-                    "\nDateOfBirth = " + user.getDateOfBirth() + "\nUserID = " + user.getUserID());
+                Log.e(TAG, "Users Detail : \nUsername = " + user.getUsername() + "\nImage = " + user.getImage() +
+                        "\nPhoneNumber = " + user.getPhoneNumber() + "\nGender = " + user.getGender() +
+                        "\nEmailID = " + user.getEmailID() + "\nCity = " + user.getCity() +
+                        "\nDateOfBirth = " + user.getDateOfBirth() + "\nUserID = " + user.getUserID());
 
-            userDataRef.child("Users").child(user.getUserID()).setValue(user);
+                userDataRef.child("Users").child(user.getUserID()).setValue(user);
 
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.putExtra("PhoneNo", strPhoneNo);
-            startActivity(intent);
-            finish();
+                progress.dismiss();
+
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }
     }
 
-    private void createAccount(String email, String password) {
+    private void LogInIntent() {
 
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.e(TAG, "createUserWithEmail : onComplete : " + task.isSuccessful());
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(RegisterProfileActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            User = task.getResult().getUser();
-                        }
+        progress.setMessage("Loading Data...\nPlease Wait...");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        progress.setProgress(0);
+        progress.show();
 
-                    }
-                });
+        mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                User = firebaseAuth.getCurrentUser();
+                Log.e(TAG,"User : "+User);
+
+                if (User != null) {
+                    progress.dismiss();
+
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
 
     }
-
-    private void signIn(String email, String password) {
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                        if (!task.isSuccessful()) {
-                            Log.e(TAG, "signInWithEmail : ", task.getException());
-                            Toast.makeText(RegisterProfileActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "Log in Sucessfull");
-                        }
-                    }
-
-                });
-    }
-
 
 }

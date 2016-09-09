@@ -1,6 +1,6 @@
 package com.tech.petabyteboy.hisaab.Models;
 
-import com.tech.petabyteboy.hisaab.Global.GlobalVariables;
+import com.tech.petabyteboy.hisaab.Global.HelperClass;
 
 /**
  * Created by petabyteboy on 17/07/16.
@@ -65,10 +65,10 @@ public class DuesSharedWithModel {
         String name = "";
         String phoneNo;
 
-        for (int i = 0; i < GlobalVariables.selectedContactList.size(); i++) {
-            phoneNo = GlobalVariables.selectedContactList.get(i).getNumber();
+        for (int i = 0; i < HelperClass.selectedContactList.size(); i++) {
+            phoneNo = HelperClass.selectedContactList.get(i).getNumber();
             if (phoneNo != null && phoneNo.equalsIgnoreCase(phone)) {
-                name = GlobalVariables.selectedContactList.get(i).getName();
+                name = HelperClass.selectedContactList.get(i).getName();
             }
         }
 
@@ -79,9 +79,9 @@ public class DuesSharedWithModel {
 
         String image = "";
 
-        for (int i = 0; i < GlobalVariables.selectedContactList.size(); i++) {
-            if (GlobalVariables.selectedContactList.get(i).getNumber() != null && GlobalVariables.data.get(i).getNumber().equalsIgnoreCase(phone))
-                image = GlobalVariables.selectedContactList.get(i).getImage();
+        for (int i = 0; i < HelperClass.selectedContactList.size(); i++) {
+            if (HelperClass.selectedContactList.get(i).getNumber() != null && HelperClass.data.get(i).getNumber().equalsIgnoreCase(phone))
+                image = HelperClass.selectedContactList.get(i).getImage();
         }
 
         return image;

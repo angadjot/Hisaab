@@ -76,16 +76,46 @@
             <RelativeLayout
                 android:id="@+id/relativeLayout"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/editbox"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.facebook.drawee.view.SimpleDraweeView
+                            android:id="@+id/imageGroup"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerInParent="true"
+                            android:layout_centerVertical="true"
+                            android:contentDescription="@string/app_name"
+                            android:scaleType="centerCrop"
+                            fresco:backgroundImage="@color/colorPrimaryDark"
+                            fresco:placeholderImage="@drawable/icon_group"
+                            fresco:placeholderImageScaleType="fitCenter"
+                            fresco:roundAsCircle="true" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/txtPhotoUpload"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/add_group_photo"
+                        android:textColor="@color/darkgray"
+                        android:textSize="16sp" />
 
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/edit_layout_group_name"
@@ -121,35 +151,6 @@
 
                     </android.support.design.widget.TextInputLayout>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <TextView
-                            android:id="@+id/txtPhotoUpload"
-                            android:layout_width="wrap_content"
-                            android:layout_height="30dp"
-                            android:layout_centerVertical="true"
-                            android:gravity="center_vertical"
-                            android:text="@string/add_group_photo"
-                            android:textColor="@color/darkgray"
-                            android:textSize="14sp" />
-
-                        <com.facebook.drawee.view.SimpleDraweeView
-                            android:id="@+id/imageGroup"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="8dp"
-                            android:contentDescription="@string/imggroup"
-                            android:scaleType="centerCrop"
-                            fresco:placeholderImage="@drawable/icon_group"
-                            fresco:backgroundImage="@color/colorPrimaryDark"
-                            fresco:placeholderImageScaleType="fitCenter"
-                            fresco:roundAsCircle="true"/>
-
-                    </RelativeLayout>
 
                 </LinearLayout>
 
@@ -157,11 +158,12 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignLeft="@+id/relativeLayout"
                 android:layout_alignStart="@+id/relativeLayout"
                 android:layout_below="@+id/relativeLayout"
                 android:background="@drawable/editbox"
+                android:layout_marginBottom="65dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -174,7 +176,7 @@
                     android:textSize="14sp" />
 
                 <GridView
-                    android:id="@+id/gridSelectedContatcts"
+                    android:id="@+id/gridSelectedContacts"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"

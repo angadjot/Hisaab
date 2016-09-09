@@ -1,2 +1,285 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
+
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.facebook.fresco/imagepipeline/0.11.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="3341b66c54367e777a0647e2db96c045329bfeab">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.facebook.fresco-imagepipeline-0.11.0_ea7b803e78cd3e538111ae4dc9921634a2706df6.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-storage-common/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="36e2b438f9b0d68fb2482c8f389e249e32840cff">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-storage-common-9.2.1_00289e414c10747ff7886cdfb490ee661ccd9fa3.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-auth/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="2506c5893e125e2f9cfc522378e893620c21b109">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-auth-9.2.1_96ba3e81285fb5e897ddc1e0173695e7dbb0ccdc.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/24.1.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="787871951412550519b0222aba3c9df4cea49875">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.android.support-recyclerview-v7-24.1.1_b6d642471ccac9491fa20cb2dececbc72de7a0d1.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="8dc56b9d964d1c8aa81a4bd99a40f7d271a4a197">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/instant-run_83d07e7bfec6ad000406f35e7b15492fde73335d.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.4/695b63d702f505b9b916e02272e3b6381bade7f/gson-2.4.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="0695b63d702f505b9b916e02272e3b6381bade7f">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/gson-2.4_8606ee35c1128cff42f8f7537da4548b6181a42a.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.android.support/cardview-v7/24.1.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="4add8aa95c9f4e9a2ad64b7e2bf08e97e28955c1">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.android.support-cardview-v7-24.1.1_2290d5e7ad982b49a07f2eb75f2321b8024e854d.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/24.1.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="f62e763609f65e47dc6c498760a4accf02776788">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-24.1.1_417b8bc9c7cff57e3208cea350db300fa4ef4905.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/.gradle/caches/modules-2/files-2.1/com.android.support/support-annotations/24.1.1/3af19f153122737b372622fa6c81dd11a1c6b999/support-annotations-24.1.1.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="3af19f153122737b372622fa6c81dd11a1c6b999">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/support-annotations-24.1.1_8122ad42ded70afd2f44a129a8d5d0554360d76d.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.digits.sdk.android/digits/1.11.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="f1b135f6761a5b8d0b9bff42d1b81172a302b245">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.digits.sdk.android-digits-1.11.1_f649be88bf50f862adb122dafdb217470fd6bf8b.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="6b896c1067633db41e9c10a3a5d0919c5c4cfc8c">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.android.gms-play-services-basement-9.2.1_bfffb18771842cff67f15e378b134f9efff10de5.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-auth-common/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ee409046028e5657a2a69edaa2eba00d6511a74c">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-auth-common-9.2.1_361c430dd83e560ca03599f71d5b471b49b64e6a.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.1.1/jars/libs/internal_impl-24.1.1.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="f78c2f395cb096f9dc1dc07e729922b8fcd3c4f5">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/internal_impl-24.1.1_b30d4a29639b5619aecd98e2990407098c4783f3.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.facebook.fresco/fresco/0.11.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="d31aadf33187c37a7cd63dc1b769f8c6e33f78c3">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.facebook.fresco-fresco-0.11.0_e0a7af087acc53d6f36a9c7b34e2e11fd3b15c8b.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.facebook.fresco/fbcore/0.11.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="98786c1770b531b9194fb6448b2a2692c64074b6">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.facebook.fresco-fbcore-0.11.0_cc8f77789551cff974305a63d762276c51673017.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.1.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="6d7d803871e3203465f71a163e7af104f807b446">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-24.1.1_30b9fad0281bad5422f768b8196fe8d57837b03b.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.crashlytics.sdk.android/answers-shim/0.0.3/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="29864b68d990da5b14dbff9fbecf10600bcf7603">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.crashlytics.sdk.android-answers-shim-0.0.3_8327bb4ac7f3ac6d6f74a7f0dc0696418f6c504f.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit/retrofit/1.8.0/a517f29ed06be2b2879524fcd94b6e9b36e2e0b5/retrofit-1.8.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="a517f29ed06be2b2879524fcd94b6e9b36e2e0b5">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/retrofit-1.8.0_44e1217dc9c6de7fc6efaf69682535d0e6fd453a.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/24.1.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="c936c1bd42f0c018c18920c7bec619ef056b24f8">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.android.support-animated-vector-drawable-24.1.1_b34c61a9d95dce7d27493037a98f6c522b6ec712.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-tasks/1.4.0/d85884acf6810a3bbbecb587f239005cbc846dc4/bolts-tasks-1.4.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="d85884acf6810a3bbbecb587f239005cbc846dc4">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/bolts-tasks-1.4.0_0526d3ebaefddb5bcf91b03a746e94756c5216e5.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-tasks/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="819c2c3a4fb135e085445d11131d069cf9c32b2a">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.android.gms-play-services-tasks-9.2.1_cc6dff35cb698406a31ec8bffaba47626ad11521.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-iid/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="d41b5d21cc9dd7d210f0ae82ac509ba7f091d611">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-iid-9.2.1_5f8d44331f12ee3a741974e092e7229c150ed90d.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.facebook.fresco/imagepipeline-base/0.11.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ca63c521b5745ae9a09629d7ca67ff6bc2a967fe">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.facebook.fresco-imagepipeline-base-0.11.0_3c151ccd25f40134b4a1930e625b720b83b10e3c.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/.gradle/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/library-2.4.0_bfbced9b38cb789832be9b7898e45e6fe1e029df.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="dd02c5305b4b53412ccc0a50b7f02131308e580f">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/instant-run-bootstrap_c532fee3fbdb4f0f1143c5c0b4249a5b4bb80534.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/io.fabric.sdk.android/fabric/1.3.12/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="3575e73a22dce98f0bdbcdb475ef55a84606a9a6">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/io.fabric.sdk.android-fabric-1.3.12_b110e63f409ca10af1b4b91aa27c792fe89a1b3b.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit/retrofit-mock/1.8.0/8bc99a93998f08302e7615cca69ba8c97c6a6b2/retrofit-mock-1.8.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="08bc99a93998f08302e7615cca69ba8c97c6a6b2">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/retrofit-mock-1.8.0_2c2d0ed77380834ecc5884c70c44743665ae2ff3.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appinvite/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="f3b0ff905873c91ab64addba30cc1e77bed34c4d">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.android.gms-play-services-appinvite-9.2.1_8c432934bccf01e3df32de668f1047f5a1707ccf.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-analytics-impl/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="5337354083e89ed67151859ab0b6b80935c60eaf">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-analytics-impl-9.2.1_00c071ba0a4b1fcecaf66768d8cf0db50e66a25b.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-database/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="f06a0705d7b8b9d18b00d056fe0e07bec75514e6">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-database-9.2.1_b7bc43f15b6f85f84922b130bad78e66f26d46e2.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.twitter.sdk.android/twitter-core/1.7.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="3248e86647b947af00d355e1f65da130aa07a20c">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.twitter.sdk.android-twitter-core-1.7.0_289fc1effe13d65e81f8e471631008a5ff140e3b.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-analytics/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="6a0f2d219f82db499ac03d5a985c4eb3e83fc422">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-analytics-9.2.1_092ac4206bd909cdbe1cd841f60af5f916d23de4.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-database-connection/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="05d2e01f33fb2097b51fce3f938dc37a75fe2d6b">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-database-connection-9.2.1_cd9aeaaf61bc2b359b1f78bd5247eeac54bbc181.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.facebook.fresco/drawee/0.11.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="1137942adeb03984c1311b662363dd38fc238fd3">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.facebook.fresco-drawee-0.11.0_1253c27b048f8bdd4ac8e1af4469f9d5dad61d9f.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.1.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="1256c10604bb098490eab070d76754ac5ceab35c">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-24.1.1_eb0cf11577c0a04364414a6bb5e2e37c57970349.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-auth-module/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="35a01d7cb4ff6b5976777bf5827fd8f206fb8757">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-auth-module-9.2.1_1904de8613f25b5f05128170d98de65c4e0782da.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.android.support/design/24.1.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="e195bd694d5389acfba27ff4fdfa64c4c65b2c05">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.android.support-design-24.1.1_385dc563f586ff1f660a4fcf1109d30bc29370ec.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="421b36cf4f0d3bbd75e8f28647fccf36674ef049">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.android.gms-play-services-base-9.2.1_ba4cd74783958b474aafb6bdda9db3d721c9ac1c.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-storage/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="e719de687ac45141de3dd613907860a495580af0">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-storage-9.2.1_f83511ce75a69188bc3b61d2075b5875b8675277.jar" />
+    </item>
+    <item
+        jar="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/exploded-aar/com.google.firebase/firebase-common/9.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="3627eacd7f7cafb5e8ae683992e7b2f9b7dcab1a">
+        <dex dex="/Users/petabyteboy/AndroidStudioProjects/Hisaab/app/build/intermediates/pre-dexed/debug/com.google.firebase-firebase-common-9.2.1_2753e710c2dd2ececbc5245424a8388bed766dd4.jar" />
+    </item>
+
+</items>

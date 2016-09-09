@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
@@ -24,8 +25,10 @@ import com.digits.sdk.android.DigitsAuthButton;
 import com.digits.sdk.android.DigitsException;
 import com.digits.sdk.android.DigitsSession;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.tech.petabyteboy.hisaab.Global.HelperClass;
 
 import java.io.File;
+import java.io.IOException;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -35,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     public static String strPhoneNo;
     public static String strUserName;
+    public static String strUserImage;
 
     private EditText editName;
     private EditText editPhoneNo;
@@ -54,6 +58,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private String UserID;
 
     public static final String PREF_NAME = "User";
+
+    private Bitmap profileImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,16 +151,21 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         });
     }
 
+    public static String getDefaultImagePath() {
+        String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Hisaab/";
+        new File(dir).mkdirs();
+        try {
+            new File(dir + TEMP_PHOTO_FILE_NAME).createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "Hisaab" + File.separator + "hisaab.jpg";
+    }
+
     private void capturePhoto() {
 
-        File mFileTemp;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if ("mounted".equals(Environment.getExternalStorageState())) {
-            mFileTemp = new File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME);
-        } else {
-            mFileTemp = new File(getFilesDir(), TEMP_PHOTO_FILE_NAME);
-        }
-        outputFileUri = Uri.fromFile(mFileTemp);
+        outputFileUri = Uri.fromFile(new File(getDefaultImagePath()));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
@@ -175,12 +186,30 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == RESULT_OK) {
-            imgUserProfile.setImageURI(outputFileUri);
+            strUserImage = null;
+            try {
+                profileImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), outputFileUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            profileImage = HelperClass.scaleDown(profileImage,500,true);
+            outputFileUri = HelperClass.getImageUri(getApplicationContext(),profileImage);
+            strUserImage = outputFileUri.toString();
+            imgUserProfile.setImageURI(strUserImage);
         }
 
         if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK) {
+            strUserImage = null;
             galleryUri = data.getData();
-            imgUserProfile.setImageURI(galleryUri);
+            try {
+                profileImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            profileImage = HelperClass.scaleDown(profileImage,500,true);
+            galleryUri = HelperClass.getImageUri(getApplicationContext(),profileImage);
+            strUserImage = galleryUri.toString();
+            imgUserProfile.setImageURI(strUserImage);
         }
 
     }
@@ -226,16 +255,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void doIfSuccessfulOtpVerification() {
-        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
+
+        Log.e(TAG,"OTP Verification Successful");
 
         Intent intent = new Intent(RegisterActivity.this, RegisterProfileActivity.class);
         intent.putExtra(username_key, strUserName);
         intent.putExtra(userID_key, UserID);
 
-        if (outputFileUri != null)
-            intent.putExtra(imgProfile_key, outputFileUri.toString());
-        else if (galleryUri != null)
-            intent.putExtra(imgProfile_key, galleryUri.toString());
+        if (strUserImage != null) {
+            intent.putExtra(imgProfile_key, strUserImage);
+        }
         else
             intent.putExtra(imgProfile_key, "");
 
@@ -245,7 +274,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void doIfNotSuccessfulOtpVerification() {
-        Toast.makeText(this, "Failure", Toast.LENGTH_SHORT).show();
+        Log.e(TAG,"Failed OTP Verification");
     }
 
 }

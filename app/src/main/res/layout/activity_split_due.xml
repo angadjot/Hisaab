@@ -93,7 +93,7 @@
                     android:layout_marginTop="8dp">
 
                     <com.facebook.drawee.view.SimpleDraweeView
-                        android:id="@+id/imgProfileSplit"
+                        android:id="@+id/imageDues"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_alignParentLeft="true"
@@ -112,33 +112,19 @@
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
                         android:layout_toLeftOf="@+id/toggleButton"
-                        android:layout_toRightOf="@+id/imgProfileSplit"
+                        android:layout_toRightOf="@+id/imageDues"
                         android:gravity="center_vertical"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/txtUserNameSplit"
+                            android:id="@+id/txtDueName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center|left"
                             android:maxLines="2"
                             android:singleLine="false"
-                            android:text="@string/created_by"
                             android:textColor="@color/darkgray"
                             android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/changepayee"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginLeft="15dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/change_payer"
-                            android:textColor="@color/colorPrimary"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:visibility="visible" />
 
                     </RelativeLayout>
 
@@ -196,7 +182,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="50dp"
-                            android:drawableLeft="@drawable/icon_pencil_dues"
+                            android:drawableLeft="@drawable/icon_pencil_due"
                             android:hint="@string/add_dues_comment"
                             android:inputType="text"
                             android:textColor="@color/darkgray"

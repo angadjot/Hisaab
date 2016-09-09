@@ -29,6 +29,8 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private FirebaseUser user;
 
+    static boolean calledAlready = false;
+
     boolean result = false;
 
     @Override
@@ -39,7 +41,10 @@ public class SplashScreenActivity extends AppCompatActivity {
         Fresco.initialize(this);
         setContentView(R.layout.activity_splash_screen);
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        if (!calledAlready) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            calledAlready = true;
+        }
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {

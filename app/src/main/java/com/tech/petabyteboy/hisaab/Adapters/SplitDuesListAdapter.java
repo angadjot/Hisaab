@@ -13,10 +13,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.tech.petabyteboy.hisaab.AddDuesActivity;
-import com.tech.petabyteboy.hisaab.Global.GlobalVariables;
+import com.tech.petabyteboy.hisaab.AddDuesDetailActivity;
+import com.tech.petabyteboy.hisaab.Global.HelperClass;
 import com.tech.petabyteboy.hisaab.Interfaces.DataTransferInterface;
-import com.tech.petabyteboy.hisaab.MainActivity;
 import com.tech.petabyteboy.hisaab.Models.DuesSharedWithModel;
 import com.tech.petabyteboy.hisaab.R;
 
@@ -105,7 +104,7 @@ public class SplitDuesListAdapter extends BaseAdapter {
         holder.editAmount.setTag(i);
         holder.friendImage.setTag(i);
 
-        if (contactNumber.get(i).equalsIgnoreCase(AddDuesActivity.User.getPhoneNumber())) {
+        if (contactNumber.get(i).equalsIgnoreCase(AddDuesDetailActivity.User.getPhoneNumber())) {
             strName = "You";
         } else {
             strName = DuesSharedWithModel.getName(contactNumber.get(i));
@@ -125,9 +124,9 @@ public class SplitDuesListAdapter extends BaseAdapter {
         Log.e("SplitDuesList","Adapter strName : "+strName);
         holder.txtContactName.setText(strName);
 
-        Log.e("SplitDuesList","Adapter Dues Amount "+i+" : "+ GlobalVariables.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(i)))).toString());
+        Log.e("SplitDuesList","Adapter Dues Amount "+i+" : "+ HelperClass.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(i)))).toString());
         if (!duesAmount.get(i).equalsIgnoreCase("")) {
-            holder.editAmount.setText(GlobalVariables.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(i)))).toString());
+            holder.editAmount.setText(HelperClass.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(i)))).toString());
         }
 
         final int position = i;
@@ -142,7 +141,7 @@ public class SplitDuesListAdapter extends BaseAdapter {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                if (!charSequence.toString().equalsIgnoreCase(GlobalVariables.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(position)))))
+                if (!charSequence.toString().equalsIgnoreCase(HelperClass.ConvertDouble(Double.valueOf(Double.parseDouble(duesAmount.get(position)))))
                         && charSequence.toString().length() > 0 && !charSequence.toString().isEmpty()
                         && !charSequence.toString().equalsIgnoreCase(".")) {
                     Log.e("SplitDuesList","Adapter Inside onTextChanged : Position : "+position);
@@ -157,7 +156,7 @@ public class SplitDuesListAdapter extends BaseAdapter {
             }
         });
 
-        if (imageAdd.get(i).equalsIgnoreCase("")) {
+        if ("".equalsIgnoreCase(imageAdd.get(i))) {
             String strImageUri = DuesSharedWithModel.getImage(contactNumber.get(i));
 
             if (strImageUri == null) {

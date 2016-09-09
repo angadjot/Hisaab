@@ -25,13 +25,13 @@
             android:text="@string/no_dues"
             android:textColor="@color/davy_grey"
             android:textSize="30sp"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/cardList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
     </FrameLayout>
 

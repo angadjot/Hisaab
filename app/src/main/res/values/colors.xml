@@ -32,7 +32,7 @@
     <color name="white">#ffffff</color>
     <color name="textColorPrimary">#212121</color>
     <color name="textColorSecondary">#727272</color>
-    <color name="empty_back">#eeeeee</color>
+    <color name="empty_back">#e2e2e2</color>
     <color name="darkgray">#ff232323</color>
     <color name="dividerColor">#B6B6B6</color>
     <color name="grey">#666666</color>

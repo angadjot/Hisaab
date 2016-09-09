@@ -47,6 +47,9 @@
     <string name="add_personal">Personal</string>
     <string name="add_others">Other</string>
     <string name="add_dues_comment">Detail (Optional)</string>
+    <string name="add_due_photo">Add Due Photo (optional)</string>
+    <string name="add_due_name">Add Due Name</string>
+    <string name="due_name">Due Name</string>
     <string name="add_amount">Amount</string>
     <string name="add_sharedwith">Shared With</string>
     <string name="add_sharedwithtap">(Tap on amounts to split unevenly)</string>
@@ -79,8 +82,10 @@
     <string name="dialog_send">Send</string>
     <string name="contact_title">Contact</string>
     <string name="symbol_rupee">₹</string>
-    <string name="change_payer">(Change Payer)</string>
+    <string name="change_admin">(Change Admin)</string>
     <string name="split_even">Split Even</string>
     <string name="phone">Phone Number</string>
     <string name="email">username@domain.com"</string>
+    <string name="total_group_dues">Total Group Dues</string>
+    <string name="you_paid_total">You Paid (Total)</string>
 </resources>

@@ -32,8 +32,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.tech.petabyteboy.hisaab.Models.HomeDuesModel;
 import com.tech.petabyteboy.hisaab.Models.UserModel;
 
-import java.text.DecimalFormat;
-
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener, View.OnClickListener {
 
     private DrawerLayout drawerLayout;
@@ -47,13 +45,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView navEmailID;
 
     private FirebaseAuth auth;
+    private DatabaseReference userdataReference;
 
     public static TextView txtAmount;
 
-    private UserModel User;
+    public static UserModel User;
     private HomeDuesModel homeDuesModel;
 
     private String TAG = "MainActivity";
+
+    public static int REQUEST_CODE_PROFILE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         auth = FirebaseAuth.getInstance();
 
-        DatabaseReference userdataReference = firebaseDatabase.getReference().child("Users").child(UserID);
+        userdataReference = firebaseDatabase.getReference().child("Users").child(UserID);
 
         userdataReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -219,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -227,9 +228,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.search:
 
@@ -269,12 +267,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.txtUserName:
 
                 Intent intent = new Intent(this, ProfileActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,REQUEST_CODE_PROFILE);
                 break;
 
             case R.id.btn_edit_profile:
-                startActivity(new Intent(getApplication(), ProfileActivity.class));
+                startActivityForResult(new Intent(getApplication(), ProfileActivity.class),REQUEST_CODE_PROFILE);
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_PROFILE && resultCode == RESULT_OK){
+            userdataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User = dataSnapshot.getValue(UserModel.class);
+                    setValues();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
     }
 }

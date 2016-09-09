@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.tech.petabyteboy.hisaab.Models.UserDuesModel;
+import com.tech.petabyteboy.hisaab.Models.DuesModel;
 import com.tech.petabyteboy.hisaab.R;
 import com.tech.petabyteboy.hisaab.RegisterActivity;
 
@@ -25,10 +25,9 @@ import java.util.List;
 public class DuesViewAdapter extends RecyclerView.Adapter<DuesViewAdapter.ViewHolder> {
 
     private static String TAG = "DuesViewAdapter";
-    private ArrayList<UserDuesModel> userDuesModelArrayList;
+    private ArrayList<DuesModel> duesModelArrayList;
     private Context context;
     private static MyClickListener myClickListener;
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -59,8 +58,8 @@ public class DuesViewAdapter extends RecyclerView.Adapter<DuesViewAdapter.ViewHo
         this.myClickListener = myClickListener;
     }
 
-    public DuesViewAdapter(ArrayList<UserDuesModel> userDuesModelArrayList, Context context) {
-        this.userDuesModelArrayList = userDuesModelArrayList;
+    public DuesViewAdapter(ArrayList<DuesModel> duesModelArrayList, Context context) {
+        this.duesModelArrayList = duesModelArrayList;
         this.context = context;
     }
 
@@ -68,7 +67,7 @@ public class DuesViewAdapter extends RecyclerView.Adapter<DuesViewAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.card_view_dues, parent, false);
+        View view = layoutInflater.inflate(R.layout.list_dues_view, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(view);
 
@@ -84,21 +83,21 @@ public class DuesViewAdapter extends RecyclerView.Adapter<DuesViewAdapter.ViewHo
         Log.e(TAG, "Phone No : " + UserDetail.getString("phone", null));
         String UserID = UserDetail.getString("phone", null);
 
-        UserDuesModel userDuesModel = userDuesModelArrayList.get(position);
+        DuesModel duesModel = duesModelArrayList.get(position);
 
-        holder.due_name.setText("Dues " + position);
+        holder.due_name.setText(duesModel.getDueName());
 
-        String strdueImage = userDuesModel.getDue_image();
+        String strdueImage = duesModel.getDueImage();
 
         if (strdueImage.isEmpty() || strdueImage.equalsIgnoreCase("")) {
             Uri uri = new Uri.Builder().scheme("res") // "res"
-                    .path(String.valueOf(R.drawable.icon_placeholder)).build();
+                    .path(String.valueOf(R.drawable.icon_group)).build();
             holder.due_image.setImageURI(uri);
         } else {
             holder.due_image.setImageURI(strdueImage);
         }
 
-        String strUserID = userDuesModel.getShared_User_id();
+        String strUserID = duesModel.getSharedUserID();
         List<String> UserIDList = Arrays.asList(strUserID.split(","));
 
         Log.e(TAG, "UserID List Size : " + UserIDList.size());
@@ -111,7 +110,7 @@ public class DuesViewAdapter extends RecyclerView.Adapter<DuesViewAdapter.ViewHo
             }
         }
 
-        String strSharedAmt = userDuesModel.getUser_Shared_Amt();
+        String strSharedAmt = duesModel.getUserSharedAmt();
 
         if (strSharedAmt.isEmpty() || strSharedAmt.equalsIgnoreCase("")) {
             holder.due_status.setText("You Get");
@@ -121,10 +120,10 @@ public class DuesViewAdapter extends RecyclerView.Adapter<DuesViewAdapter.ViewHo
             Float amt = Float.parseFloat(SharedAmtList.get(index));
             Log.e(TAG, "Shared Amount : " + amt);
 
-            if (amt < 0) {
-                holder.due_status.setText("You Pay");
-            } else if (amt >= 0)
+            if (amt <= 0) {
                 holder.due_status.setText("You Get");
+            } else if (amt > 0)
+                holder.due_status.setText("You Pay");
 
             holder.due_amount.setText("\u20B9 " + SharedAmtList.get(index).replace("-", ""));
         }
@@ -133,7 +132,7 @@ public class DuesViewAdapter extends RecyclerView.Adapter<DuesViewAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return userDuesModelArrayList.size();
+        return duesModelArrayList.size();
     }
 
     public interface MyClickListener {

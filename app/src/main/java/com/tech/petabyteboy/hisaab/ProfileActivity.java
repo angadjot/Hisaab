@@ -1,10 +1,13 @@
 package com.tech.petabyteboy.hisaab;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
@@ -31,9 +34,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.tech.petabyteboy.hisaab.Global.HelperClass;
 import com.tech.petabyteboy.hisaab.Models.UserModel;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -52,6 +57,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private AutoCompleteTextView txtCountry;
     private TextView txt_dob;
     private TextView txt_gender;
+    private ProgressDialog progress;
 
     private SimpleDateFormat dateFormatter;
 
@@ -65,6 +71,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private Uri outputFileUri;
 
+    private Bitmap profileImage;
+
     private UserModel User;
 
     private String TAG = "ProfileActivity";
@@ -77,8 +85,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_profile);
         setSupportActionBar(toolbar);
+        setTitle(R.string.profile_title);
+
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME, MODE_PRIVATE);
         Log.e(TAG, "Phone No : " + userPref.getString("phone", null));
@@ -96,9 +114,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         txtCountry = (AutoCompleteTextView) findViewById(R.id.City);
 
         editEmail = (EditText) findViewById(R.id.EmailID);
-
-        ImageButton btn_back = (ImageButton) findViewById(R.id.btn_back);
-        btn_back.setOnClickListener(this);
 
         ImageView btnEdit = (ImageView) findViewById(R.id.btn_edit);
         btnEdit.setOnClickListener(this);
@@ -278,16 +293,21 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    public static String getDefaultImagePath() {
+        String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Hisaab/";
+        new File(dir).mkdirs();
+        try {
+            new File(dir + TEMP_PHOTO_FILE_NAME).createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "Hisaab" + File.separator + "hisaab.jpg";
+    }
+
     private void capturePhoto() {
 
-        File mFileTemp;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if ("mounted".equals(Environment.getExternalStorageState())) {
-            mFileTemp = new File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME);
-        } else {
-            mFileTemp = new File(getFilesDir(), TEMP_PHOTO_FILE_NAME);
-        }
-        outputFileUri = Uri.fromFile(mFileTemp);
+        outputFileUri = Uri.fromFile(new File(getDefaultImagePath()));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
@@ -313,7 +333,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             case R.id.btn_done:
                 updateDatabase();
-                finish();
                 break;
 
             case R.id.btn_edit:
@@ -339,6 +358,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void updateDatabase() {
 
+        progress = new ProgressDialog(this);
+        progress.setMessage("Uploading Details...\nPlease Wait...");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        progress.setProgress(0);
+        progress.show();
+
         if (!strUserName.equalsIgnoreCase(editName.getText().toString()))
             userdataReference.child("username").setValue(editName.getText().toString());
         if (!strPhoneNo.equalsIgnoreCase(editPhoneNo.getText().toString()))
@@ -363,23 +389,54 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 }
             });
         }
+
+        userdataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e(TAG,"All Done");
+                progress.dismiss();
+                Intent returnIntent = new Intent();
+                setResult(Activity.RESULT_OK,returnIntent);
+                finish();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if ((requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == -1) || (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == RESULT_OK)) {
+
+        if (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == RESULT_OK) {
+            strImage = null;
+            try {
+                Log.e(TAG,"onActivityResult : outputFileUri : "+outputFileUri);
+                profileImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(),outputFileUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            profileImage = HelperClass.scaleDown(profileImage,500,true);
+            outputFileUri = HelperClass.getImageUri(getApplicationContext(),profileImage);
             imgUserProfile.setImageURI(outputFileUri);
             strImage = String.valueOf(outputFileUri);
-            return;
         }
 
-        if ((requestCode == REQUEST_CODE_GALLERY && resultCode == -1) || (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK)) {
-
+        if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK) {
+            strImage = null;
             Uri galleryUri = data.getData();
+            try {
+                profileImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            profileImage = HelperClass.scaleDown(profileImage,500,true);
+            galleryUri = HelperClass.getImageUri(getApplicationContext(),profileImage);
             imgUserProfile.setImageURI(galleryUri);
             strImage = String.valueOf(galleryUri);
-            return;
         }
     }
 }

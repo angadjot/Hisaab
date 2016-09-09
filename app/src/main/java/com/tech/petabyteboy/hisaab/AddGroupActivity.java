@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -13,7 +14,6 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -27,40 +27,38 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tech.petabyteboy.hisaab.Adapters.DuesSharedWithListAdapter;
-import com.tech.petabyteboy.hisaab.Global.GlobalVariables;
+import com.tech.petabyteboy.hisaab.Global.HelperClass;
 import com.tech.petabyteboy.hisaab.Models.DuesSharedWithModel;
+import com.tech.petabyteboy.hisaab.Models.DuesModel;
+import com.tech.petabyteboy.hisaab.Models.GroupModel;
 import com.tech.petabyteboy.hisaab.Models.UserModel;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 
 public class AddGroupActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private Toolbar toolbar_add_group;
 
     private EditText editComment;
     private EditText editGroupName;
 
     private String strGroupComment;
-    private String strGroupId;
     private String strGroupImage;
     private String strGroupName;
 
-    private File mFileTemp;
+    private Bitmap groupImage;
+    private Uri outputFileUri;
 
-    private GridView gridSelectedContatcts;
+    private GridView gridSelectedContacts;
 
     private SimpleDraweeView imageGroup;
 
@@ -68,7 +66,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
 
     public static final int RESPONSE_CODE_ADDGROUP = 0;
     public static final int REQUEST_CODE_GALLERY = 1;
-    public static final int REQUEST_IMAGE_CAPTURE = 2;
+    public static final int REQUEST_CODE_TAKE_PICTURE = 2;
     public static final String TEMP_PHOTO_FILE_NAME = "hisaab.jpg";
 
     // Custom BaseAdapter for GridView (Contacts)
@@ -77,22 +75,32 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
 
     private static UserModel User;
     private static String UserID;
+    private String strUserName;
     private String strUserImage;
 
+    public ArrayList<String> groupContactImage;
+    public ArrayList<String> groupContactName;
+    public ArrayList<String> groupContactNumber;
+
     private String TAG = "AddGroupActivity";
+
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference groupDatRef;
+    private DatabaseReference groupListDataRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
 
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
 
         SharedPreferences userPref = getSharedPreferences(RegisterActivity.PREF_NAME, MODE_PRIVATE);
         Log.e(TAG, "Phone No : " + userPref.getString("phone", null));
         UserID = userPref.getString("phone", null);
 
-        DatabaseReference groupsdataRef = firebaseDatabase.getReference().child("Groups").child(UserID);
+        groupDatRef = firebaseDatabase.getReference().child("Groups");
+        groupListDataRef = firebaseDatabase.getReference().child("GroupList");
 
         DatabaseReference userdataReference = firebaseDatabase.getReference().child("Users").child(UserID);
 
@@ -100,6 +108,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User = dataSnapshot.getValue(UserModel.class);
+                strUserName = User.getUsername();
                 strUserImage = User.getImage();
                 Log.e(TAG, "Image : " + strUserImage);
             }
@@ -109,9 +118,6 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
 
             }
         });
-
-        toolbar_add_group = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar_add_group);
 
         Button btnDone = (Button) findViewById(R.id.btn_done);
         btnDone.setOnClickListener(this);
@@ -125,6 +131,10 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
         imageGroup = (SimpleDraweeView) findViewById(R.id.imageGroup);
         imageGroup.setOnClickListener(this);
 
+        groupContactName = new ArrayList<>();
+        groupContactNumber = new ArrayList<>();
+        groupContactImage = new ArrayList<>();
+
         mItemMultiClickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -135,55 +145,26 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
             }
         };
 
-        gridSelectedContatcts = (GridView) findViewById(R.id.gridSelectedContatcts);
+        gridSelectedContacts = (GridView) findViewById(R.id.gridSelectedContacts);
 
         getScale();
 
         init();
-
-        editGroupName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                if (editGroupName.getText().toString().length() > 0) {
-                    editGroupName.setTypeface(editGroupName.getTypeface(), 1);
-                } else {
-                    editGroupName.setTypeface(editGroupName.getTypeface(), 0);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
-
-        if ("mounted".equals(Environment.getExternalStorageState())) {
-            mFileTemp = new File(Environment.getExternalStorageDirectory(), TEMP_PHOTO_FILE_NAME);
-        } else {
-            mFileTemp = new File(getFilesDir(), TEMP_PHOTO_FILE_NAME);
-        }
     }
 
     private void init() {
 
         if (adapter == null) {
-            GlobalVariables.data = initGridButton();
+            HelperClass.data = initGridButton();
             getScale();
             adapter = new DuesSharedWithListAdapter(getApplicationContext());
-            gridSelectedContatcts.setOnItemClickListener(mItemMultiClickListener);
-            gridSelectedContatcts.setAdapter(adapter);
+            gridSelectedContacts.setOnItemClickListener(mItemMultiClickListener);
+            gridSelectedContacts.setAdapter(adapter);
             return;
         }
         adapter = new DuesSharedWithListAdapter(getApplication());
-        gridSelectedContatcts.setOnItemClickListener(mItemMultiClickListener);
-        gridSelectedContatcts.setAdapter(adapter);
+        gridSelectedContacts.setOnItemClickListener(mItemMultiClickListener);
+        gridSelectedContacts.setAdapter(adapter);
 
     }
 
@@ -206,7 +187,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
 
     public void getScale() {
         getWindowManager().getDefaultDisplay().getSize(new Point());
-        gridSelectedContatcts.setNumColumns(4);
+        gridSelectedContacts.setNumColumns(4);
     }
 
     @Override
@@ -215,9 +196,9 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()) {
 
             case R.id.btn_cross:
-                GlobalVariables.groupContactName.clear();
-                GlobalVariables.groupContactImage.clear();
-                GlobalVariables.groupContactNumber.clear();
+                groupContactName.clear();
+                groupContactImage.clear();
+                groupContactNumber.clear();
                 finish();
                 break;
 
@@ -269,16 +250,16 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "Hisaab" + File.separator + "Hisaab.jpg";
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + File.separator + "Hisaab" + File.separator + "hisaab.jpg";
     }
 
     private void capturePhoto() {
 
-        Uri outputFileUri = Uri.fromFile(new File(getDefaultImagePath()));
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        outputFileUri = Uri.fromFile(new File(getDefaultImagePath()));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
         }
     }
 
@@ -295,13 +276,31 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Uri imageUri = Uri.parse(getDefaultImagePath());
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            imageGroup.setImageURI(imageUri);
+        if (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == RESULT_OK) {
+            strGroupImage = null;
+            try {
+                groupImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), outputFileUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            groupImage = HelperClass.scaleDown(groupImage,500,true);
+            outputFileUri = HelperClass.getImageUri(getApplicationContext(),groupImage);
+            strGroupImage = String.valueOf(outputFileUri);
+            imageGroup.setImageURI(outputFileUri);
         }
 
         if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK) {
-            imageGroup.setImageURI(imageUri);
+            strGroupImage = null;
+            Uri galleryUri = data.getData();
+            try {
+                groupImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), galleryUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            groupImage = HelperClass.scaleDown(groupImage,500,true);
+            galleryUri = HelperClass.getImageUri(getApplicationContext(),groupImage);
+            strGroupImage = String.valueOf(galleryUri);
+            imageGroup.setImageURI(galleryUri);
         }
 
         if (requestCode == REQUEST_SELECT_CONTACT && resultCode == RESULT_OK) {
@@ -364,8 +363,8 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
                     + "\n Contact Image : " + model.getImage() + "\n Contact AddBtn : " + model.getAddBtn()
                     + "\n Contact Selected : " + model.isSeleted());
 
-            for (int i = 0; i < GlobalVariables.data.size(); i++) {
-                DuesSharedWithModel newModel = GlobalVariables.data.get(i);
+            for (int i = 0; i < HelperClass.data.size(); i++) {
+                DuesSharedWithModel newModel = HelperClass.data.get(i);
                 if (newModel.number != null && model.number.equalsIgnoreCase(newModel.number)) {
                     Toast.makeText(this, "Contact Already Added!!", Toast.LENGTH_SHORT).show();
                     isNumberAddedBefore = true;
@@ -374,7 +373,7 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
             }
 
             if (!isNumberAddedBefore) {
-                GlobalVariables.data.add(model);
+                HelperClass.data.add(model);
             }
             init();
         }
@@ -383,87 +382,126 @@ public class AddGroupActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        GlobalVariables.groupContactName.clear();
-        GlobalVariables.groupContactNumber.clear();
-        GlobalVariables.groupContactImage.clear();
+        groupContactName.clear();
+        groupContactNumber.clear();
+        groupContactImage.clear();
         finish();
-    }
-
-
-    public static String trimFront(String input) {
-        if (input == null) {
-            return input;
-        }
-        for (int i = 0; i < input.length(); i++) {
-            if (!Character.isWhitespace(input.charAt(i))) {
-                return input.substring(i);
-            }
-        }
-        return "";
     }
 
     public void AddGroupIntent() {
 
-        String title;
         strGroupName = editGroupName.getText().toString();
         strGroupComment = editComment.getText().toString();
 
         if (TextUtils.isEmpty(strGroupName)) {
             Toast.makeText(this, "Please add title of Group", Toast.LENGTH_SHORT).show();
             return;
-        } else {
-            finish();
         }
 
-        if (strGroupName.contains(" ")) {
-            title = strGroupName.replaceAll("\\s", "");
-        } else {
-            title = strGroupName;
+        groupContactNumber.clear();
+        groupContactName.clear();
+        groupContactImage.clear();
+
+        groupContactNumber.add(UserID);
+        groupContactName.add(strUserName);
+        groupContactImage.add(strUserImage);
+
+        if (adapter == null || adapter.getSelected().size() <= 0) {
+            Toast.makeText(this, "Select the members with whom u want to share amount", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        if (title.length() != 0) {
-            strGroupName = trimFront(strGroupName);
+        ArrayList<DuesSharedWithModel> selected = adapter.getSelected();
 
-            StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < selected.size(); i++) {
+            groupContactName.add(selected.get(i).getName());
+            groupContactNumber.add(selected.get(i).getNumber());
+            groupContactImage.add(selected.get(i).getImage());
 
-            sb.append(UserID);
+            Log.e(TAG, "Group Contact Name " + i + " : " + groupContactName.get(i) + "\n"
+                    + "Group Contact Number " + i + " : " + groupContactNumber.get(i) + "\n"
+                    + "Group Contact Image " + i + " : " + groupContactImage.get(i) + "\n"
+                    + "Selected Contact \n"
+                    + "Name : " + i + " : " + selected.get(i).getName() + "\n"
+                    + "Number : " + i + " : " + selected.get(i).getNumber() + "\n"
+                    + "Image : " + i + " : " + selected.get(i).getImage() + "\n");
+        }
 
-            ArrayList<DuesSharedWithModel> selected = adapter.getSelected();
+        if (strGroupName.length() != 0) {
 
-            if (selected.size() > 0) {
-                sb.append(",");
-            }
+            Log.e("Add Group Data Size : ", String.valueOf(HelperClass.data.size()));
 
-            for (int i = 0; i < selected.size(); i++) {
-                if ((selected.get(i)).number.length() <= 10) {
-                    sb.append((selected.get(i)).number);
-                    if (i != selected.size() - 1) {
-                        sb.append(",");
-                    }
+            StringBuilder sbNumber = new StringBuilder();
+            StringBuilder sbName = new StringBuilder();
+            StringBuilder sbImage = new StringBuilder();
+
+            String strNumber;
+            String strNames;
+            String strImage;
+
+            GroupModel groupModel = new GroupModel();
+
+            for (int i = 0; i < groupContactNumber.size(); i++) {
+                if (groupContactNumber.get(i).length() <= 10) {
+                    sbNumber.append(groupContactNumber.get(i));
+                    if (i != groupContactNumber.size())
+                        sbNumber.append(",");
                 } else {
-                    sb.append((selected.get(i)).number.substring((selected.get(i)).number.length() - 10));
-                    if (i != selected.size() - 1) {
-                        sb.append(",");
-                    }
+                    sbNumber.append(groupContactNumber.get(i).substring(groupContactNumber.get(i).length() - 10));
+                    if (i != groupContactNumber.size())
+                        sbNumber.append(",");
                 }
             }
+            strNumber = String.valueOf(sbNumber);
+            Log.e(TAG, "strNumber : " + strNumber);
 
-            Log.e("Add Group Data Size : ", String.valueOf(GlobalVariables.data.size()));
+            for (int count = 0; count < groupContactName.size(); count++) {
+                if (groupContactName.get(count).equalsIgnoreCase("You")) {
+                    sbName.append(strUserName);
+                } else {
+                    sbName.append(groupContactName.get(count));
+                }
+                if (count != groupContactName.size() - 1) {
+                    sbName.append(",");
+                }
+            }
+            strNames = String.valueOf(sbName);
+            Log.e(TAG, "strNames : " + strNames);
 
-            String strNumber = String.valueOf(sb);
+            for (int count = 0; count < groupContactImage.size(); count++) {
+                sbImage.append(groupContactImage.get(count));
+                if (count != groupContactImage.size() - 1) {
+                    sbImage.append(",");
+                }
+            }
+            strImage = String.valueOf(sbImage);
+            Log.e(TAG, "strImage : " + strImage);
 
-            UserID = strNumber;
+            String Date = DateFormat.getDateInstance().format(new Date());
+            String Time = DateFormat.getTimeInstance().format(new Date());
 
-            Log.e("Number String ", strNumber);
+            groupModel.setGroupName(strGroupName);
+            groupModel.setGroupImage(strGroupImage);
+            if (!strGroupComment.isEmpty())
+                groupModel.setGroupComment(strGroupComment);
+            groupModel.setDate(Date);
+            groupModel.setTime(Time);
+            groupModel.setGroupMemberName(strNames);
+            groupModel.setGroupMemberNumber(strNumber);
+            groupModel.setGroupMemberImage(strImage);
 
-            String strDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+            DatabaseReference groupRef = groupDatRef.push();
+            String groupID = groupRef.getKey();
+            groupModel.setGroupID(groupID);
 
-            if (strNumber.isEmpty() || strNumber.equalsIgnoreCase("")) {
-                Toast.makeText(this, "Select the members with whom u want to share amount", Toast.LENGTH_SHORT).show();
-                return;
+            groupRef.setValue(groupModel);
+
+            for (int i = 0; i < groupContactNumber.size(); i++) {
+                groupListDataRef.child(groupContactNumber.get(i)).child(groupID).setValue(true);
             }
 
-            //add Group in database
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
 
             return;
         }

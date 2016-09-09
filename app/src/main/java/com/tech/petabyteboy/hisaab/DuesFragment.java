@@ -25,7 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tech.petabyteboy.hisaab.Adapters.DuesViewAdapter;
-import com.tech.petabyteboy.hisaab.Models.UserDuesModel;
+import com.tech.petabyteboy.hisaab.Models.DuesModel;
 
 import java.util.ArrayList;
 
@@ -41,13 +41,15 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
     private TextView txtMessage;
 
     private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference duesListDataRef;
     private DatabaseReference duesDataRef;
 
     private String UserID;
     private Boolean flag_Dues_exists = false;
 
-    public static ArrayList<UserDuesModel> userDuesModelArrayList;
     private ProgressDialog progressDialog;
+
+    public static ArrayList<DuesModel> duesModelArrayList;
 
     @Nullable
     @Override
@@ -59,29 +61,53 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
         UserID = UserDetail.getString("phone", null);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        duesDataRef = firebaseDatabase.getReference().child("Dues").child(UserID);
-
-        userDuesModelArrayList = new ArrayList<>();
-
-        progressDialog = new ProgressDialog(getContext());
+        duesListDataRef = firebaseDatabase.getReference().child("DuesList").child(UserID);
+        duesDataRef = firebaseDatabase.getReference().child("Dues");
+        duesModelArrayList = new ArrayList<>();
 
         add_dues = (FloatingActionButton) view.findViewById(R.id.fab);
         add_dues.setOnClickListener(this);
 
         txtMessage = (TextView) view.findViewById(R.id.txtDuesMsg);
 
+        progressDialog = new ProgressDialog(getContext());
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.cardList);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new DuesViewAdapter(userDuesModelArrayList, getContext());
+        mAdapter = new DuesViewAdapter(duesModelArrayList, getContext());
         mRecyclerView.setAdapter(mAdapter);
 
-        duesDataRef.addChildEventListener(new ChildEventListener() {
+        duesListDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren())
+                    flag_Dues_exists = true;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        Log.e(TAG,"Dues Exists : "+flag_Dues_exists);
+
+        duesListDataRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.hasChildren()) {
-                    flag_Dues_exists = true;
+                Log.e(TAG, "DATA Checked");
+
+                if (flag_Dues_exists) {
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    txtMessage.setVisibility(View.GONE);
+                    progressDialog.setMessage("Fetching Data...\nPlease Wait...");
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setProgress(0);
+                    progressDialog.show();
+                    FetchData(dataSnapshot.getKey());
                 }
             }
 
@@ -98,30 +124,6 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        duesDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e(TAG, "DATA Checked");
-
-                if (flag_Dues_exists) {
-                    FetchData();
-                } else {
-                    txtMessage.setVisibility(View.VISIBLE);
-                    txtMessage.setText("No Dues Yet!!");
-                }
-
-                if (progressDialog != null) {
-                    progressDialog.hide();
-                    progressDialog = null;
-                }
             }
 
             @Override
@@ -133,28 +135,15 @@ public class DuesFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    private void FetchData() {
-        duesDataRef.addChildEventListener(new ChildEventListener() {
+    private void FetchData(String key) {
+
+        duesDataRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                UserDuesModel userDuesModel = dataSnapshot.getValue(UserDuesModel.class);
-                userDuesModelArrayList.add(userDuesModel);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DuesModel duesModel = dataSnapshot.getValue(DuesModel.class);
+                duesModelArrayList.add(duesModel);
                 mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                progressDialog.dismiss();
             }
 
             @Override
